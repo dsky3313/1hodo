@@ -1,4 +1,9 @@
 ------------------------------
+-- 테이블
+------------------------------
+local addonName, ns = ...
+
+------------------------------
 -- 체크박스 위젯 (통합본)
 ------------------------------
 function Checkbox(category, varName, label, tooltip, default)
@@ -11,10 +16,10 @@ function Checkbox(category, varName, label, tooltip, default)
 
     local initializer = Settings.CreateControlInitializer("SettingsCheckboxControlTemplate", setting, nil, tooltip)
     setting:SetValueChangedCallback(function()
-        if AuctionFilter then AuctionFilter() end
-        if DeleteNow then DeleteNow() end
-        if MykeyUpdate then MykeyUpdate() end
-        if MyPartyStatusBG and MyPartyStatusBG:GetScript("OnEvent") then
+        if ns.AuctionFilter then ns.AuctionFilter() end
+        if ns.DeleteNow then ns.DeleteNow() end
+        if ns.MykeyUpdate then ns.MykeyUpdate() end
+        if ns.MyPartyStatusBG and ns.MyPartyStatusBG:GetScript("OnEvent") then
             MyPartyStatusBG:GetScript("OnEvent")(MyPartyStatusBG, "HODO_OPTION_CHANGED")
         end
     end)

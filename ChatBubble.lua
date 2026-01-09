@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
 FontOption = {
     { label = "2002", value = "Fonts\\2002.TTF" },
     { label = "2002b", value = "Fonts\\2002b.TTF" },
@@ -13,7 +14,7 @@ FontOption = {
 ------------------------------
 -- 동작
 ------------------------------
-function ChatBubble()
+function ns.ChatBubble()
     local db = hodoDB or {}
 
     local fontPath = db.CB_FontPath or "Fonts\\2002.TTF"

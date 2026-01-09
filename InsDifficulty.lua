@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
 difficultyTable = {
     dungeon = {{label="일반", value="1"}, {label="영웅", value="2"}, {label="신화", value="23"}},
     raid = {{label="일반", value="14"}, {label="영웅", value="15"}, {label="신화", value="16"}},
@@ -235,5 +236,5 @@ resetBtn:SetScript("OnClick", function()
     end
 end)
 
-setDifficulty = SyncDifficultyWithDB
+ns.setDifficulty = SyncDifficultyWithDB
 UpdateUIStatus()

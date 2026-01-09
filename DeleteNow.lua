@@ -1,6 +1,8 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
+
 -- 아이템 링크
 local DeleteItemLink = StaticPopup1:CreateFontString(nil, "OVERLAY", "GameFontNormalMed1")
 DeleteItemLink:SetPoint("CENTER", StaticPopup1, "CENTER", 0, 10)
@@ -22,7 +24,7 @@ DeleteNowLocalizeDeleteText = gsub(DeleteNowLocalizeDeleteText, "@", "")
 ------------------------------
 -- 동작
 ------------------------------
-function DeleteNow()
+function ns.DeleteNow()
     local db = hodoDB or {}
     if not StaticPopup1 or not StaticPopup1EditBox then return end
 

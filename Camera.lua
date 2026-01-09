@@ -1,7 +1,8 @@
 ------------------------------
 -- 동작
 ------------------------------
-function CameraTilt()
+local addonName, ns = ...
+function ns.CameraTilt()
     local db = hodoDB or {}
     local base = db.CameraBase or 0.55
     local baseDown = db.CameraDown or 0.55

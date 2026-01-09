@@ -1,0 +1,17 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.blizzard.com/wow/ui/" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Frame name="HodoCheckboxDropdownTemplate" inherits="SettingsCheckboxDropdownControlTemplate" virtual="true">
+        <KeyValues>
+            <KeyValue key="settingControlControlStyle" value="SettingsControlStyle.Checkbox" type="global"/>
+        </KeyValues>
+        <Scripts>
+            <OnLoad>
+                -- 필수: 기초 테이블들을 미리 생성해두어야 에러가 안 납니다.
+                self.cbrHandles = {};
+                -- 블리자드 기능을 주입합니다.
+                Mixin(self, SettingsCheckboxDropdownControlMixin);
+                self:OnLoad();
+            </OnLoad>
+        </Scripts>
+    </Frame>
+</Ui>

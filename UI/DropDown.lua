@@ -1,4 +1,9 @@
 ------------------------------
+-- 테이블
+------------------------------
+local addonName, ns = ...
+
+------------------------------
 -- 드롭다운
 ------------------------------
 function DropDown(category, varName, label, tooltip, options, default)
@@ -19,8 +24,8 @@ function DropDown(category, varName, label, tooltip, options, default)
 
     local initializer = Settings.CreateControlInitializer("SettingsDropDownControlTemplate", setting, GetOptions, tooltip)
         setting:SetValueChangedCallback(function()
-            if ChatBubble then ChatBubble() end
-            if CameraTilt then CameraTilt() end
+            if ns.ChatBubble then ns.ChatBubble() end
+            if ns.CameraTilt then ns.CameraTilt() end
         end)
 
     local layout = SettingsPanel:GetLayout(category)

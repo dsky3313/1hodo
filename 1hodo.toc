@@ -10,6 +10,8 @@
 # 2020.11.23 제작
 
 #UI/Table.lua
+UI/CheckboxDropdown.xml
+
 UI/Checkbox.lua
 UI/CheckboxDropdown.lua
 UI/CheckboxSlider.lua
@@ -22,6 +24,7 @@ ChatBubble.lua
 DeleteNow.lua
 FrameScale.lua
 InsDifficulty.lua
+MyKey.lua
 NewLFG.lua
 
 
@@ -29,7 +32,6 @@ Slash.lua
 1Option.lua
 
 
-#MyKey.lua
 #PartyClass.lua
 #KeyRoll.lua
 #SkyRiding.lua

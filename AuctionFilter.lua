@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
 local AH_Filter = Enum.AuctionHouseFilter.CurrentExpansionOnly
 local C_Timer_After = C_Timer.After
 
@@ -29,7 +30,7 @@ function checkCraftFilter()
     Dropdown:ValidateResetState()
 end
 
-function AuctionFilter()
+function ns.AuctionFilter()
     checkAuctionFilter()
     checkCraftFilter()
 end

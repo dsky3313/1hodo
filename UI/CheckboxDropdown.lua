@@ -1,37 +1,29 @@
-------------------------------
--- 체크박스 드롭다운
-------------------------------
-function CreateSettingsCheckboxDropdownInitializer(cbSetting, cbLabel, cbTooltip, dropdownSetting, dropdownOptions, dropdownLabel, dropdownTooltip, newTagID)
-    local data = {
+local addonName, ns = ...
+
+-- [이니셜라이저 생성 부분은 동일]
+function CreateHodoInitializer(cbSetting, cbLabel, cbTooltip, dropdownSetting, dropdownOptions)
+    local template = "HodoCheckboxDropdownTemplate"
+    local initializer = Settings.CreateElementInitializer(template, {
         name = cbLabel,
         tooltip = cbTooltip,
         cbSetting = cbSetting,
-        cbLabel = cbLabel,
-        cbTooltip = cbTooltip,
         dropdownSetting = dropdownSetting,
         dropdownOptions = dropdownOptions,
-        dropdownLabel = dropdownLabel,
-        dropdownTooltip = dropdownTooltip,
-        newTagID = newTagID,
-    }
-    local initializer = Settings.CreateSettingInitializer("SettingsCheckboxDropdownControlTemplate", data)
-    initializer:AddSearchTags(cbLabel, dropdownLabel)
+        GetSetting = function(self) return self.cbSetting end,
+    })
+    initializer.data = initializer:GetData()
+    initializer.frameTemplate = template
     return initializer
 end
 
-function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, options, defaultCB, defaultDD)
+-- [수정된 메인 함수]
+function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, options, defaultCB, defaultDD, func)
     local varID_CB = "hodo_" .. varNameCB
     local varID_DD = "hodo_" .. varNameDD
 
-    local cbSetting = Settings.GetSetting(varID_CB)
-    if not cbSetting then
-        cbSetting = Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, hodoDB, Settings.VarType.Boolean, label, defaultCB or false)
-    end
-
-    local ddSetting = Settings.GetSetting(varID_DD)
-    if not ddSetting then
-        ddSetting = Settings.RegisterAddOnSetting(category, varID_DD, varNameDD, hodoDB, Settings.VarType.String, label, defaultDD or options[1].CheckboxDropdownTextValue)
-    end
+    local cbSetting = Settings.GetSetting(varID_CB) or Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, hodoDB, Settings.VarType.Boolean, label, defaultCB or false)
+    local fallbackValue = (options and options[1]) and options[1].value or ""
+    local ddSetting = Settings.GetSetting(varID_DD) or Settings.RegisterAddOnSetting(category, varID_DD, varNameDD, hodoDB, Settings.VarType.String, label, defaultDD or fallbackValue)
 
     local function GetOptions()
         local container = Settings.CreateControlTextContainer()
@@ -41,23 +33,21 @@ function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, option
         return container:GetData()
     end
 
-    local initializer = CreateSettingsCheckboxDropdownInitializer(
-        cbSetting, label, tooltip,
-        ddSetting, GetOptions, label, tooltip
-    )
+    local initializer = CreateHodoInitializer(cbSetting, label, tooltip, ddSetting, GetOptions)
 
+    -- 전달받은 func를 실행하도록 설정
     local function OnValueChanged()
-        if NewLFG then NewLFG() end
-        if setDifficulty then setDifficulty(true) end
+        if func then func() end
     end
 
     cbSetting:SetValueChangedCallback(OnValueChanged)
     ddSetting:SetValueChangedCallback(OnValueChanged)
 
     local layout = SettingsPanel:GetLayout(category)
-    if layout then
+    if layout and initializer then
         layout:AddInitializer(initializer)
     end
 
-    return cbSetting, ddSetting, initializer
+    -- [중요] 밖에서 부모-자식 관계를 맺을 수 있도록 값들을 반환해줍니다.
+    return cbSetting, initializer
 end

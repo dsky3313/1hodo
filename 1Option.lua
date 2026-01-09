@@ -1,8 +1,8 @@
 ------------------------------
 -- 테이블
 ------------------------------
--- OptionCategory = OptionCategory or nil
--- hodoOptionLayout = hodoOptionLayout or nil
+local addonName, ns = ...
+
 ------------------------------
 -- 설정창
 ------------------------------
@@ -57,20 +57,18 @@ function hodoCreateOptions()
     local PartyQoLHeader = CreateSettingsListSectionHeaderInitializer("파티 편의기능")
     hodoOptionLayout:AddInitializer(PartyQoLHeader)
     Checkbox(OptionCategory, "usePartyClass", "파티 클래스 현황 표시", "유틸리티 보유 현황을 PVE 프레임 옆에 표시합니다.", true)
-    CheckBoxDropDown(OptionCategory, "useInsDifficultyDungeon", "InsDifficultyDungeon", "던전 난이도", "파티장일 시, 해당 난이도로 자동 변경합니다.", difficultyTable.dungeon, true, difficultyTable.dungeon[3].value)
-    CheckBoxDropDown(OptionCategory, "useInsDifficultyRaid", "InsDifficultyRaid", "공격대 난이도", "파티장이 되면 공격대 난이도를 자동으로 변경합니다.", difficultyTable.raid, true, difficultyTable.raid[3].value)
-    CheckBoxDropDown(OptionCategory, "useInsDifficultyLegacy", "InsDifficultyLegacy", "낭만 공격대 규모", "공격대 인원 및 이전 확장팩 난이도를 설정합니다.", difficultyTable.legacy, true, difficultyTable.legacy[2].value)
-
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyDungeon", "InsDifficultyDungeon", "던전 난이도", "파티장일 시 자동 변경.", difficultyTable.dungeon, true, difficultyTable.dungeon[3].value, function() ns.setDifficulty(true) end)
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyRaid", "InsDifficultyRaid", "공격대 난이도", "파티장일 시 자동 변경.", difficultyTable.raid, true, difficultyTable.raid[3].value, function() ns.setDifficulty(true) end)
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyLegacy", "InsDifficultyLegacy", "낭만 공격대 규모", "난이도 설정.", difficultyTable.legacy, true, difficultyTable.legacy[2].value, function() ns.setDifficulty(true) end)
     Checkbox(OptionCategory, "useMyKey", "내돌", "파티 제목란에 돌을 보여줍니다.", true)
-    local parentSetting, parentInit = CheckBoxDropDown(OptionCategory, "useNewLFG", "NewLFG_AlertSoundTableID", "파티 신청 알림", "신규 파티 신청자가 있을 때,\n알림 메시지와 선택한 소리를 재생합니다.", NewLFG_AlertSoundTable, true, "5274")
+    local parentSetting, parentInit = CheckBoxDropDown(OptionCategory, "useNewLFG", "NewLFG_AlertSoundTableID", "파티 신청 알림", "알림 메시지와 소리 재생.", NewLFG_AlertSoundTable, true, "5274", ns.NewLFG)
     local childSetting, childInit = Checkbox(OptionCategory, "NewLFG_LeaderOnly", "파티장 일때 활성화", "본인이 파티장일 시 기능 활성화.", true)
     if parentInit and childInit then
         local function IsModifiable()
-            return parentSetting:GetValue();
-        end
-        childInit:SetParentInitializer(parentInit, IsModifiable)
+        return parentSetting:GetValue() == true
     end
-
+    childInit:SetParentInitializer(parentInit, IsModifiable)
+    end
 
     -- 카메라
     local CameraTiltHeader = CreateSettingsListSectionHeaderInitializer("카메라 ")

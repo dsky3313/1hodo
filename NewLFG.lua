@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블 (변경 금지)
 ------------------------------
+local addonName, ns = ...
 NewLFG_AlertSoundTable = {
     { label = "MurlocAggro", value = "416" },
     { label = "AuctionWindowOpen", value = "5274" },
@@ -32,7 +33,7 @@ NewLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인�
 ------------------------------
 -- 동작 (행동 대장)
 ------------------------------
-function NewLFG()
+function ns.NewLFG()
     if not InCombatLockdown() then
         if GroupFinderFrame and not GroupFinderFrame:IsVisible() then
             PVEFrame_ShowFrame("GroupFinderFrame")
@@ -105,7 +106,7 @@ local function OnLFGUpdate(self, event)
     -- 신규 신청자 감지
     if count > lastApps then
         if (now - lastTrig) > 1.0 then -- 1초 스팸 방지
-            NewLFG()
+            ns.NewLFG()
             lastTrig = now
         end
     end

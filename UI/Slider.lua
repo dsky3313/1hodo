@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
 local Formatters = {
     ["Percent"] = function(v)
         return ("%d%%"):format(math.floor((v or 0) * 100 + 0.5))
@@ -30,13 +31,9 @@ function Slider(category, varName, label, tooltip, min, max, step, default, form
 
     local initializer = Settings.CreateControlInitializer("SettingsSliderControlTemplate", setting, sliderOptions, tooltip)
         setting:SetValueChangedCallback(function()
-            if FrameScale then FrameScale() end
+            if ns.ChatBubble then ns.ChatBubble() end
+            if ns.FrameScale then ns.FrameScale() end
         end)
-
-    setting:SetValueChangedCallback(function()
-        if ChatBubble then ChatBubble() end
-        if FrameScale then FrameScale() end
-    end)
 
     local layout = SettingsPanel:GetLayout(category)
         if layout then

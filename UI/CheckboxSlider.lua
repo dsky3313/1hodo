@@ -1,6 +1,7 @@
 ------------------------------
 -- 테이블
 ------------------------------
+local addonName, ns = ...
 local Formatters = {
     ["Percent"] = function(v) 
         return ("%d%%"):format(math.floor((v or 0) * 100 + 0.5)) 
@@ -61,8 +62,8 @@ function CheckboxSlider(category, varNameCB, varNameSlider, label, tooltip, min,
     )
 
     local function OnValueChanged()
-        if CameraTilt then CameraTilt() end
-        if setDifficulty then setDifficulty(true) end
+        if ns.CameraTilt then ns.CameraTilt() end
+        if ns.setDifficulty then ns.setDifficulty(true) end
     end
 
     cbSetting:SetValueChangedCallback(OnValueChanged)
