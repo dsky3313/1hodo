@@ -4,7 +4,9 @@
         "deprecated",
         "param-type-mismatch",
         "ambiguity-1",
-        "redefined-local"
+        "redefined-local",
+        "need-check-nil",
+        "undefined-field"
     ],
     "Lua.diagnostics.globals": [
         "SetRaidDifficulties",
