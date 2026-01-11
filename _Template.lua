@@ -12,8 +12,8 @@
 -- 동작
 ------------------------------
 -- local function FuncName()
-    -- local _, instanceType = GetInstanceInfo()
-    -- if instanceType ~= "none" then return end
+-- local _, instanceType, difficultyID = GetInstanceInfo()
+-- if difficultyID == 8 or instanceType == "raid" then return end -- 8 쐐기 / raid 레이드
 -- end
 
 -- ns.FuncName = FuncName
@@ -23,7 +23,7 @@
 -- local initFuncName = CreateFrame("Frame")
 -- initFuncName:RegisterEvent("PLAYER_LOGIN")
 -- initFuncName:SetScript("OnEvent", function(self, event)
---     hodoDB = hodoDB or {}
+--     hodoDB = hodoDB or {} 260111
 --     if FuncName then FuncName()
 --     end
 --     self:UnregisterAllEvents()

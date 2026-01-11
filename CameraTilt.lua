@@ -22,12 +22,12 @@ end
 ns.CameraTilt = CameraTilt
 
 ------------------------------
--- 초기화 이벤트
+-- 이벤트
 ------------------------------
 local initCamera = CreateFrame("Frame")
 initCamera:RegisterEvent("PLAYER_LOGIN")
 initCamera:SetScript("OnEvent", function(self, event)
-    hodoDB = hodoDB or {}
+    -- hodoDB = hodoDB or {} 260111
     UIParent:UnregisterEvent("EXPERIMENTAL_CVAR_CONFIRMATION_NEEDED")
     if CameraTilt then CameraTilt()
     end
