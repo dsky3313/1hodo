@@ -37,6 +37,13 @@ end
 ------------------------------
 -- 디스플레이
 ------------------------------
+-- local HodoCopyKeyFrame = CreateFrame("Frame", "HodoCopyKeyFrame", UIParent, "HodoCopyKeyTemplate")
+
+-- HodoCopyKeyFrame.EditBox:SetText("복사할 내용")
+
+-- HodoCopyKeyFrame:Show()
+
+
 local keyDropDown = CreateFrame("DropdownButton", "KeyDropDownBtn", lfgDifficulty, "WowStyle1DropdownTemplate")
 keyDropDown:SetWidth(138)
 keyDropDown:SetPoint("TOP", lfgDifficulty, "BOTTOM", 0, -7)

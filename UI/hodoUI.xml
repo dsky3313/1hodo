@@ -7,4 +7,47 @@
     <Frame name="hodoDropdownTemplate" inherits="SettingsDropDownControlTemplate" virtual="true"/>
     <Frame name="hodoCheckboxSliderTemplate" inherits="SettingsCheckBoxSliderControlTemplate" virtual="true"/>
     <Frame name="hodoCheckboxDropdownTemplate" inherits="SettingsCheckBoxDropDownControlTemplate" virtual="true"/>
+
+    <!-- Frame -->
+    <Frame name="hodoCopyKeyTemplate" virtual="true" inherits="GameDialogTemplate" toplevel="true" movable="true" enableMouse="true" frameStrata="DIALOG" hidden="true">
+        <Size x="350" y="120"/>
+        <Anchors>
+            <Anchor point="CENTER" x="0" y="100"/>
+        </Anchors>
+        <Frames>
+            <EditBox parentKey="EditBox" inherits="InputBoxInstructionsTemplate" autoFocus="false" multiLine="false">
+                <Size x="280" y="32"/>
+                <Anchors>
+                    <Anchor point="CENTER" x="0" y="10"/>
+                </Anchors>
+                <Scripts>
+                    <OnEscapePressed>
+                        self:ClearFocus();
+                        self:GetParent():Hide();
+                    </OnEscapePressed>
+                    <OnEditFocusGained>
+                        self:HighlightText(); </OnEditFocusGained>
+                </Scripts>
+            </EditBox>
+
+            <Button parentKey="CloseButton" inherits="StaticPopupButtonTemplate" text="닫기">
+                <Anchors>
+                    <Anchor point="BOTTOM" x="0" y="15"/>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+                        self:GetParent():Hide();
+                    </OnClick>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton");
+            </OnLoad>
+            <OnDragStart>self:StartMoving();</OnDragStart>
+            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
+        </Scripts>
+    </Frame>
 </Ui>
