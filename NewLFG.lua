@@ -28,14 +28,14 @@ local lastTrig = 0
 ------------------------------
 -- 디스플레이
 ------------------------------
-local NewLFG_Alert = CreateFrame("Frame", "NewLFG_AlertFrame", UIParent)
-NewLFG_Alert:SetSize(400, 50)
-NewLFG_Alert:SetPoint("TOP", 50, -150)
-NewLFG_Alert:Hide()
+local newLFG_Alert = CreateFrame("Frame", "NewLFG_AlertFrame", UIParent)
+newLFG_Alert:SetSize(400, 50)
+newLFG_Alert:SetPoint("TOP", 50, -150)
+newLFG_Alert:Hide()
 
-NewLFG_Alert.Text = NewLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge2Outline")
-NewLFG_Alert.Text:SetPoint("CENTER")
-NewLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인하세요!")
+newLFG_Alert.Text = newLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge2Outline")
+newLFG_Alert.Text:SetPoint("CENTER")
+newLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인하세요!")
 
 ------------------------------
 -- 동작 (행동 대장)
@@ -53,9 +53,9 @@ function NewLFG()
     local soundID = (hodoDB and hodoDB.soundID) or "5274"
     PlaySound(soundID, "Master")
 
-    NewLFG_Alert:Show()
+    newLFG_Alert:Show()
     if alertTimer then alertTimer:Cancel() end -- 타이머 중첩 방지
-    alertTimer = C_Timer.After(7, function() NewLFG_Alert:Hide() end)
+    alertTimer = C_Timer.After(7, function() newLFG_Alert:Hide() end)
 end
 
 ------------------------------

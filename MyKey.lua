@@ -91,7 +91,7 @@ local function RefreshKeyInfo() -- 돌 새로고침
 end
 
 local function MyKey()
-    local isEnabled = hodoDB.useMyKey ~= false -- 기본값 true
+    local isEnabled = hodoDB.usePartyClass ~= false -- 기본값 true
     if not isEnabled or isIns() then
         keyDropDown:Hide()
         return

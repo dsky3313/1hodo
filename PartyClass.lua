@@ -37,61 +37,74 @@ local UtilTable = {
 ------------------------------
 -- 디스플레이
 ------------------------------
-local initPartyClass = _G["PartyClassFrame"]
-initPartyClass.ClassIcons = {}
+local partyClassFrame = CreateFrame("Frame", "PartyClassFrame", UIParent, "DefaultPanelBaseTemplate")
+partyClassFrame:SetSize(542, 212)
+partyClassFrame:SetPoint("TOPLEFT", PVEFrame, "BOTTOMLEFT", 20, 2)
+partyClassFrame:SetFrameStrata("LOW")
+
+partyClassFrame.Background = partyClassFrame:CreateTexture(nil, "BACKGROUND")
+partyClassFrame.Background:SetAtlas("UI-DialogBox-Background-Dark")
+partyClassFrame.Background:SetAlpha(0.7)
+partyClassFrame.Background:SetPoint("TOPLEFT", 6, -2)
+partyClassFrame.Background:SetPoint("BOTTOMRIGHT", -2, 2)
+
+partyClassFrame.TitleText = partyClassFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+partyClassFrame.TitleText:SetPoint("TOPRIGHT", partyClassFrame, "TOPRIGHT", -40, -5)
+partyClassFrame.TitleText:SetText("클래스 시너지 및 해제 현황")
+
+partyClassFrame.ClassIcons = {}
+
+partyClassFrame:Hide()
 
 local function CreateIcon()
-    local ICON_SIZE, CLASS_ICON_SIZE = 30, 30
-    local X_GAP, Y_GAP, MAX_ROWS = 240, 2, 4
-    local START_X, START_Y = 25, -42
+    local iconSize, iconSizeClass = 30, 30
+    local xGap, maxRow = 240, 4
+    local startX, startY = 25, -42
 
     for i, data in ipairs(UtilTable) do
-        local PartyUtilIcon = CreateFrame("Frame", nil, initPartyClass)
-        PartyUtilIcon:SetSize(ICON_SIZE, ICON_SIZE)
-        local col, row = math.floor((i - 1) / MAX_ROWS), (i - 1) % MAX_ROWS
-        PartyUtilIcon:SetPoint("TOPLEFT", initPartyClass, "TOPLEFT", START_X + (col * X_GAP), START_Y - (row * (ICON_SIZE + Y_GAP + 10)))
+        local partyUtilityIcon = CreateFrame("Frame", nil, partyClassFrame)
+        partyUtilityIcon:SetSize(iconSize, iconSize)
+        local col, row = math.floor((i - 1) / maxRow), (i - 1) % maxRow
+        partyUtilityIcon:SetPoint("TOPLEFT", partyClassFrame, "TOPLEFT", startX + (col * xGap), startY - (row * (iconSize + 12)))
 
-        -- 유틸아이콘
-        PartyUtilIcon.icon = PartyUtilIcon:CreateTexture(nil, "ARTWORK")
-        PartyUtilIcon.icon:SetTexture(data.iconID)
-        PartyUtilIcon.icon:SetPoint("TOPLEFT", 2, -2)
-        PartyUtilIcon.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+        partyUtilityIcon.icon = partyUtilityIcon:CreateTexture(nil, "ARTWORK")
+        partyUtilityIcon.icon:SetTexture(data.iconID)
+        partyUtilityIcon.icon:SetPoint("TOPLEFT", 2, -2)
+        partyUtilityIcon.icon:SetPoint("BOTTOMRIGHT", -2, 2)
 
-        PartyUtilIcon.border = PartyUtilIcon:CreateTexture(nil, "OVERLAY")
-        PartyUtilIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
-        PartyUtilIcon.border:SetAllPoints()
+        partyUtilityIcon.border = partyUtilityIcon:CreateTexture(nil, "OVERLAY")
+        partyUtilityIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
+        partyUtilityIcon.border:SetAllPoints()
 
-        PartyUtilIcon.text = PartyUtilIcon:CreateFontString(nil, "OVERLAY", "GameFontNormalMed2Outline")
-        PartyUtilIcon.text:SetPoint("LEFT", PartyUtilIcon, "RIGHT", 5, 0)
-        PartyUtilIcon.text:SetText(data.name)
-        PartyUtilIcon.text:SetTextColor(1, 1, 1)
-        PartyUtilIcon.text:SetTextColor(1, 0.82, 0)
+        partyUtilityIcon.nameText = partyUtilityIcon:CreateFontString(nil, "OVERLAY", "GameFontNormalMed2Outline")
+        partyUtilityIcon.nameText:SetPoint("LEFT", partyUtilityIcon, "RIGHT", 5, 0)
+        partyUtilityIcon.nameText:SetText(data.name)
+        partyUtilityIcon.nameText:SetTextColor(1, 0.82, 0)
 
         local count = 0
         for _, classInfo in ipairs(ClassTable) do
-            local isMatch = (data.type == "dispell" and classInfo.dispell[data.key]) or (data.type ~= "dispell" and classInfo[classInfo.id] or classInfo[data.key])
-            isMatch = (data.type == "dispell" and classInfo.dispell[data.key]) or (data.type ~= "dispell" and classInfo[data.key])
-            if isMatch then -- 클래스 아이콘
-                local ClassIcon = CreateFrame("Frame", nil, PartyUtilIcon)
-                ClassIcon:SetSize(CLASS_ICON_SIZE, CLASS_ICON_SIZE)
-                ClassIcon:SetPoint("LEFT", PartyUtilIcon, "RIGHT", 60 + (count * (CLASS_ICON_SIZE + 5)), 0)
-                ClassIcon.classID = classInfo.id
+            local isMatch = (data.type == "dispell" and classInfo.dispell[data.key]) or (data.type ~= "dispell" and classInfo[data.key])
+            if isMatch then
+                local partyClassIcon = CreateFrame("Frame", nil, partyUtilityIcon)
+                partyClassIcon:SetSize(iconSizeClass, iconSizeClass)
+                partyClassIcon:SetPoint("LEFT", partyUtilityIcon, "RIGHT", 60 + (count * (iconSizeClass + 5)), 0)
+                partyClassIcon.classID = classInfo.id
                 count = count + 1
 
-                ClassIcon.icon = ClassIcon:CreateTexture(nil, "ARTWORK")
-                ClassIcon.icon:SetTexture(classInfo.iconID)
-                ClassIcon.icon:SetPoint("TOPLEFT", 2, -2)
-                ClassIcon.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+                partyClassIcon.icon = partyClassIcon:CreateTexture(nil, "ARTWORK")
+                partyClassIcon.icon:SetTexture(classInfo.iconID)
+                partyClassIcon.icon:SetPoint("TOPLEFT", 2, -2)
+                partyClassIcon.icon:SetPoint("BOTTOMRIGHT", -2, 2)
 
-                ClassIcon.border = ClassIcon:CreateTexture(nil, "OVERLAY")
-                ClassIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
-                ClassIcon.border:SetAllPoints()
+                partyClassIcon.border = partyClassIcon:CreateTexture(nil, "OVERLAY")
+                partyClassIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
+                partyClassIcon.border:SetAllPoints()
 
-                ClassIcon.text = ClassIcon:CreateFontString(nil, "OVERLAY", "SystemFont_Outline_Small")
-                ClassIcon.text:SetPoint("TOP", ClassIcon, "BOTTOM", 0, 5)
-                ClassIcon.text:SetText(classInfo.name)
+                partyClassIcon.text = partyClassIcon:CreateFontString(nil, "OVERLAY", "SystemFont_Outline_Small")
+                partyClassIcon.text:SetPoint("TOP", partyClassIcon, "BOTTOM", 0, 5)
+                partyClassIcon.text:SetText(classInfo.name)
 
-                table.insert(initPartyClass.ClassIcons, ClassIcon)
+                table.insert(partyClassFrame.ClassIcons, partyClassIcon)
             end
         end
     end
@@ -102,27 +115,22 @@ end
 ------------------------------
 function PartyClass()
     if isIns() then
-        initPartyClass:Hide()
-        return
-    end
-    local isEnabled = true
-    if hodoDB and hodoDB.useMyKey == false then isEnabled = false end
-
-    local shouldShow = true
-    if not isEnabled then shouldShow = false end
-    if not hodoDB or hodoDB.usePartyClass == false then shouldShow = false end
-    if not (PVEFrame and PVEFrame:IsShown()) then shouldShow = false end
-
-    if isIns() then shouldShow = false end
-
-    if not shouldShow then
-        initPartyClass:Hide()
+        partyClassFrame:Hide()
         return
     end
 
-    initPartyClass:Show()
+    local isEnabled = hodoDB.usePartyClass ~= false -- 기본값 true
+    local usePartyClass = not (hodoDB and hodoDB.usePartyClass == false)
+    local pveShown = PVEFrame and PVEFrame:IsShown()
 
-    local activeIDs = {}
+    if not (isEnabled and usePartyClass and pveShown) then
+        partyClassFrame:Hide()
+        return
+    end
+
+    partyClassFrame:Show()
+
+    local activeIDs = {} -- 파티 데이터 수집
     local _, _, pID = UnitClass("player")
     if pID then activeIDs[pID] = true end
 
@@ -135,7 +143,7 @@ function PartyClass()
         end
     end
 
-    for _, b in ipairs(initPartyClass.ClassIcons) do
+    for _, b in ipairs(partyClassFrame.ClassIcons) do -- 아이콘 색상 업데이트
         if activeIDs[b.classID] then
             b.icon:SetDesaturated(false)
             b.icon:SetAlpha(1)
@@ -149,37 +157,37 @@ function PartyClass()
         end
     end
 end
+
 ------------------------------
 -- 이벤트
 ------------------------------
+local initPartyClass = CreateFrame("Frame")
+initPartyClass:RegisterEvent("ADDON_LOADED")
 initPartyClass:RegisterEvent("PLAYER_ENTERING_WORLD")
-initPartyClass:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-initPartyClass:SetScript("OnEvent", function(self, event)
+initPartyClass:SetScript("OnEvent", function(self, event, arg1)
     if event == "PLAYER_ENTERING_WORLD" then
         C_Timer.After(0.5, function()
             if isIns() then
-                initPartyClass:UnregisterEvent("GROUP_ROSTER_UPDATE")
+                self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+                partyClassFrame:Hide()
             else
-                initPartyClass:RegisterEvent("GROUP_ROSTER_UPDATE")
+                self:RegisterEvent("GROUP_ROSTER_UPDATE")
+                if #partyClassFrame.ClassIcons == 0 then CreateIcon() end
+                PartyClass()
             end
-
-            if #initPartyClass.ClassIcons == 0 then
-                CreateIcon()
-            end
-            PartyClass()
         end)
+    elseif event == "ADDON_LOADED" and arg1 == addonName then
+        if PVEFrame then
+            PVEFrame:HookScript("OnShow", PartyClass)
+            PVEFrame:HookScript("OnHide", PartyClass)
+        end
+        if #partyClassFrame.ClassIcons == 0 then CreateIcon() end
     else
-        PartyClass()
+        if not isIns() then
+            PartyClass()
+        end
     end
 end)
-
-if PVEFrame then
-    PVEFrame:HookScript("OnShow", PartyClass)
-    PVEFrame:HookScript("OnHide", PartyClass)
-end
-
-if #initPartyClass.ClassIcons == 0 then CreateIcon() end
-PartyClass()
 
 ns.PartyClass = PartyClass
