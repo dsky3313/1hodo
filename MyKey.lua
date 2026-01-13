@@ -29,7 +29,7 @@ local dungeonName = {
     ["잿불맥주 양조장"] = "양조장",
     ["어둠불꽃 동굴"] = "어불동",
 }
-local lfgDifficulty = LFGListFrame.EntryCreation.ActivityDropdown
+local lfgPlaysStyle = LFGListEntryCreationPlayStyleDropdown
 
 local function GetMyKeyShortName(fullName) return dungeonName[fullName] or fullName end
 
@@ -46,9 +46,9 @@ end
 -- 디스플레이
 ------------------------------
 -- 드롭다운
-local keyDropDown = CreateFrame("DropdownButton", "KeyDropDownBtn", lfgDifficulty, "WowStyle1DropdownTemplate")
-keyDropDown:SetWidth(138)
-keyDropDown:SetPoint("TOP", lfgDifficulty, "BOTTOM", 0, -7)
+local keyDropDown = CreateFrame("DropdownButton", "KeyDropDownBtn", lfgPlaysStyle, "WowStyle1DropdownTemplate")
+keyDropDown:SetWidth(110)
+keyDropDown:SetPoint("RIGHT", lfgPlaysStyle, "LEFT", -8, 0)
 
 -- 알림창
 local copyKeyFrame = CreateFrame("Frame", nil, UIParent)
@@ -97,7 +97,7 @@ local function MyKey()
         return
     end
 
-    local isTargetVisible = lfgDifficulty:IsVisible() and lfgDifficulty:GetHeight() > 1
+    local isTargetVisible = lfgPlaysStyle:IsVisible() and lfgPlaysStyle:GetHeight() > 1
     keyDropDown:SetShown(isTargetVisible)
     if isTargetVisible then
         RefreshKeyInfo()
@@ -163,7 +163,7 @@ initMyKey:SetScript("OnEvent", function (self, event, arg1)
             end
         end)
     elseif event == "ADDON_LOADED" and arg1 == addonName then
-        lfgDifficulty:HookScript("OnShow", MyKey)
+        lfgPlaysStyle:HookScript("OnShow", MyKey)
         LFGListFrame.EntryCreation:HookScript("OnShow", MyKey)
     else
         if not isIns() then

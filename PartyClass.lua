@@ -37,20 +37,22 @@ local UtilTable = {
 ------------------------------
 -- 디스플레이
 ------------------------------
-local partyClassFrame = CreateFrame("Frame", "PartyClassFrame", UIParent, "DefaultPanelBaseTemplate")
+local partyClassFrame = CreateFrame("Frame", "PartyClassFrame", UIParent, "BackdropTemplate")
 partyClassFrame:SetSize(542, 212)
 partyClassFrame:SetPoint("TOPLEFT", PVEFrame, "BOTTOMLEFT", 20, 2)
 partyClassFrame:SetFrameStrata("LOW")
+
+NineSliceUtil.ApplyLayoutByName(partyClassFrame, "ButtonFrameTemplateNoPortrait")
+
+partyClassFrame.TitleText = partyClassFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+partyClassFrame.TitleText:SetPoint("TOPRIGHT", partyClassFrame, "TOPRIGHT", -40, -5)
+partyClassFrame.TitleText:SetText("파티 클래스 현황")
 
 partyClassFrame.Background = partyClassFrame:CreateTexture(nil, "BACKGROUND")
 partyClassFrame.Background:SetAtlas("UI-DialogBox-Background-Dark")
 partyClassFrame.Background:SetAlpha(0.7)
 partyClassFrame.Background:SetPoint("TOPLEFT", 6, -2)
 partyClassFrame.Background:SetPoint("BOTTOMRIGHT", -2, 2)
-
-partyClassFrame.TitleText = partyClassFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-partyClassFrame.TitleText:SetPoint("TOPRIGHT", partyClassFrame, "TOPRIGHT", -40, -5)
-partyClassFrame.TitleText:SetText("클래스 시너지 및 해제 현황")
 
 partyClassFrame.ClassIcons = {}
 
