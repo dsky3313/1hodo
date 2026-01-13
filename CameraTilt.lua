@@ -19,8 +19,6 @@ local function CameraTilt()
     SetCVar("test_cameraDynamicPitchBaseFovPadFlying", baseFlying)
 end
 
-ns.CameraTilt = CameraTilt
-
 ------------------------------
 -- 이벤트
 ------------------------------
@@ -32,3 +30,5 @@ initCamera:SetScript("OnEvent", function(self, event)
     end
     self:UnregisterAllEvents()
 end)
+
+ns.CameraTilt = CameraTilt

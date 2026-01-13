@@ -22,8 +22,6 @@ local function FrameScale()
     if thf then thf:SetScale(thfScale) end
 end
 
-ns.FrameScale = FrameScale
-
 ------------------------------
 -- 이벤트
 ------------------------------
@@ -33,3 +31,5 @@ initFrameScale:SetScript("OnEvent", function(self, event)
     C_Timer.After(0.5, function() FrameScale() end)
     self:UnregisterAllEvents()
 end)
+
+ns.FrameScale = FrameScale

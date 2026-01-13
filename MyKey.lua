@@ -142,8 +142,6 @@ keyDropDown:SetupMenu(function(dropdown, rootDescription)
     end
 end)
 
-ns.MyKey = MyKey
-
 ------------------------------
 -- 이벤트
 ------------------------------
@@ -176,3 +174,5 @@ initMyKey:SetScript("OnEvent", function (self, event, arg1)
         end
     end
 end)
+
+ns.MyKey = MyKey

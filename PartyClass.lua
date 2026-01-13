@@ -181,3 +181,5 @@ end
 
 if #initPartyClass.ClassIcons == 0 then CreateIcon() end
 PartyClass()
+
+ns.PartyClass = PartyClass

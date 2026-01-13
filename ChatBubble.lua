@@ -27,8 +27,6 @@ local function ChatBubble()
     end
 end
 
-ns.ChatBubble = ChatBubble
-
 ------------------------------
 -- 이벤트
 ------------------------------
@@ -39,3 +37,5 @@ initChatBubble:SetScript("OnEvent", function(self, event)
     if ChatBubble then ChatBubble() end
     self:UnregisterAllEvents()
 end)
+
+ns.ChatBubble = ChatBubble

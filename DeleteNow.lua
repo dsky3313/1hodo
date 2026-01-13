@@ -71,8 +71,6 @@ local function DeleteNow()
     GameTooltip:Show()
 end
 
-ns.DeleteNow = DeleteNow
-
 ------------------------------
 -- 이벤트
 ------------------------------
@@ -103,3 +101,5 @@ hooksecurefunc("StaticPopup_OnHide", function(self)
         SetCVar("alwaysCompareItems", 1)
     end
 end)
+
+ns.DeleteNow = DeleteNow

@@ -86,3 +86,5 @@ initFilterFrame:SetScript("OnEvent", function(self, event, arg1)
         checkCraftFilter()
     end
 end)
+
+ns.AuctionFilter = AuctionFilter
