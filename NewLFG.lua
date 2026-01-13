@@ -1,7 +1,13 @@
 ------------------------------
--- 테이블 (변경 금지)
+-- 테이블
 ------------------------------
 local addonName, ns = ...
+hodoDB = hodoDB or {}
+
+local function isIns() -- 인스확인
+    local _, instanceType, difficultyID = GetInstanceInfo()
+    return (difficultyID == 1 or instanceType == "raid") -- 1 일반 / 8 쐐기
+end
 
 NewLFG_AlertSoundTable = {
     { label = "MurlocAggro", value = "416" },
@@ -27,7 +33,7 @@ NewLFG_Alert:SetSize(400, 50)
 NewLFG_Alert:SetPoint("TOP", 50, -150)
 NewLFG_Alert:Hide()
 
-NewLFG_Alert.Text = NewLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+NewLFG_Alert.Text = NewLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge2Outline")
 NewLFG_Alert.Text:SetPoint("CENTER")
 NewLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인하세요!")
 
@@ -59,25 +65,21 @@ ns.NewLFG = NewLFG
 -- 이벤트 (감시관)
 ------------------------------
 local function OnLFGUpdate(self, event)
-    local _, instanceType, difficultyID = GetInstanceInfo()
-    if difficultyID == 8 or instanceType == "raid" then -- 8 쐐기 / raid 레이드
+    if isIns() then
         self:UnregisterAllEvents()
         self:RegisterEvent("PLAYER_ENTERING_WORLD") -- 밖으로 나갈 때 감지용
         lastApps = 0
         return
     end
 
-    -- [2] DB 초기화 및 사용 여부 체크
-    hodoDB = hodoDB or { useNewLFG = true }
+    local hodoDB = hodoDB or { useNewLFG = true }
     if not hodoDB.useNewLFG then return end
 
-    -- [3] 파티장 체크
     if hodoDB.NewLFG_LeaderOnly and IsInGroup() and not UnitIsGroupLeader("player") then
         lastApps = 0
         return
     end
 
-    -- [4] 모집글 활성화 여부에 따른 이벤트 제어
     local hasEntry = C_LFGList.HasActiveEntryInfo and C_LFGList.HasActiveEntryInfo()
     if not hasEntry then
         self:UnregisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
@@ -87,25 +89,21 @@ local function OnLFGUpdate(self, event)
         self:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
     end
 
-    -- [5] 신청자 비교 로직
     local now = GetTime()
     local apps = C_LFGList.GetApplicants()
     local count = (apps and #apps) or 0
 
-    -- 접속/로딩 직후 뻥튀기 방지
     if now < armedAt then
         lastApps = count
         return
     end
 
-    -- 상태 변경 시 데이터 동기화
     if event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
         lastApps = count
         armedAt = now + 1.5
         return
     end
 
-    -- 신규 신청자 감지
     if count > lastApps then
         if (now - lastTrig) > 1.0 then -- 1초 스팸 방지
             ns.NewLFG()

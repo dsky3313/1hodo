@@ -4,25 +4,24 @@
 local addonName, ns = ...
 hodoDB = hodoDB or {}
 
+local function isIns() -- 인스확인
+    local _, instanceType, difficultyID = GetInstanceInfo()
+    return (difficultyID == 1 or instanceType == "raid") -- 1 일반 / 8 쐐기
+end
+
 local AHF = Enum.AuctionHouseFilter.CurrentExpansionOnly
 ------------------------------
 -- 동작
 ------------------------------
--- 인스?
-local function isIns()
-    local _, instanceType, difficultyID = GetInstanceInfo()
-    return (difficultyID == 8 or instanceType == "raid")
-end
-
 -- 경매장 필터
 local function checkAuctionFilter()
     if isIns() then return end
 
-    local isChecked = (hodoDB.useAuctionFilter ~= false) -- 기본값 true
+    local isEnabled = (hodoDB.useAuctionFilter ~= false) -- 기본값 true
     local AuctionFrame = AuctionHouseFrame and AuctionHouseFrame.SearchBar
 
     if not AuctionFrame or not AuctionFrame.FilterButton then return end
-    AuctionFrame.FilterButton.filters[AHF] = isChecked
+    AuctionFrame.FilterButton.filters[AHF] = isEnabled
     AuctionFrame:UpdateClearFiltersButton()
 end
 
@@ -30,12 +29,12 @@ end
 local function checkCraftFilter()
     if isIns() then return end
 
-    local isChecked = (hodoDB.useCraftFilter ~= false) -- 기본값 true
+    local isEnabled = (hodoDB.useCraftFilter ~= false) -- 기본값 true
     local craftFrame = ProfessionsCustomerOrdersFrame
     local dropdown = craftFrame and craftFrame.BrowseOrders and craftFrame.BrowseOrders.SearchBar and craftFrame.BrowseOrders.SearchBar.FilterDropdown
 
     if not dropdown or not dropdown.filters then return end
-    dropdown.filters[AHF] = isChecked
+    dropdown.filters[AHF] = isEnabled
     dropdown:ValidateResetState()
 end
 

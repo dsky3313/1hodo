@@ -42,6 +42,7 @@ function hodoCreateOptions()
     -- 파티
     local CameraFrame = CreateSettingsListSectionHeaderInitializer("파티")
     hodoOptionLayout:AddInitializer(CameraFrame)
+    Checkbox(OptionCategory, "useMyKey", "쐐기 던전명 복사", "파티 생성창에서 파티원의 쐐기돌 이름을 복사할 수 있습니다.", true)
     CheckBoxDropDown(OptionCategory, "useNewLFG", "soundID", "파티신청 알림", "새로운 파티신청 시 알림", NewLFG_AlertSoundTable, true, NewLFG_AlertSoundTable[2].value)
 
     -- 편의기능

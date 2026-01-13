@@ -1,0 +1,7 @@
+{
+    "Lua.diagnostics.disable": [
+        "exp-in-action",
+        "assign-type-mismatch",
+        "param-type-mismatch"
+    ]
+}

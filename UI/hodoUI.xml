@@ -9,45 +9,30 @@
     <Frame name="hodoCheckboxSliderTemplate" inherits="SettingsCheckBoxSliderControlTemplate" virtual="true"/>
 
     <!-- Frame -->
-    <Frame name="hodoCopyKeyTemplate" virtual="true" inherits="GameDialogTemplate" toplevel="true" movable="true" enableMouse="true" frameStrata="DIALOG" hidden="true">
-        <Size x="350" y="120"/>
-        <Anchors>
-            <Anchor point="CENTER" x="0" y="100"/>
-        </Anchors>
-        <Frames>
-            <EditBox parentKey="EditBox" inherits="InputBoxInstructionsTemplate" autoFocus="false" multiLine="false">
-                <Size x="280" y="32"/>
-                <Anchors>
-                    <Anchor point="CENTER" x="0" y="10"/>
-                </Anchors>
-                <Scripts>
-                    <OnEscapePressed>
-                        self:ClearFocus();
-                        self:GetParent():Hide();
-                    </OnEscapePressed>
-                    <OnEditFocusGained>
-                        self:HighlightText(); </OnEditFocusGained>
-                </Scripts>
-            </EditBox>
+    <Frame name="hodoGameMenuFrame" inherits="MainMenuFrameTemplate" virtual="true"/> <!-- ESC 게임메뉴  -->
+    <Frame name="hodoPopupTemplate" inherits="StaticPopupBaseTemplate" virtual="true"/> <!-- 아이템삭제  -->
+    <Frame name="hodoDialogHeaderTemplate" inherits="DialogHeaderTemplate" virtual="true"/> <!-- 게임메뉴 헤더  -->
 
-            <Button parentKey="CloseButton" inherits="StaticPopupButtonTemplate" text="닫기">
-                <Anchors>
-                    <Anchor point="BOTTOM" x="0" y="15"/>
-                </Anchors>
-                <Scripts>
-                    <OnClick>
-                        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-                        self:GetParent():Hide();
-                    </OnClick>
-                </Scripts>
-            </Button>
-        </Frames>
-        <Scripts>
-            <OnLoad>
-                self:RegisterForDrag("LeftButton");
-            </OnLoad>
-            <OnDragStart>self:StartMoving();</OnDragStart>
-            <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
-        </Scripts>
-    </Frame>
-</Ui>
+    <!-- Font  -->
+    <Font name="hodoFontNormal" inherits="UserScaledFontGameNormal" virtual="true"/> <!-- 12, yellow  -->
+    <Font name="hodoFontNormalL" inherits="UserScaledFontGameNormal" justifyH="LEFT" virtual="true"/>
+    <Font name="hodoFontNormalR" inherits="UserScaledFontGameNormal" justifyH="RIGHT" virtual="true"/>
+    <Font name="hodoFontNormalSmall" inherits="UserScaledFontGameNormalSmall" virtual="true"/> <!-- 10  -->
+    <Font name="hodoFontNormalSmallL" inherits="UserScaledFontGameNormalSmall" justifyH="LEFT" virtual="true"/>
+    <Font name="hodoFontNormalSmallR" inherits="UserScaledFontGameNormalSmall" justifyH="RIGHT" virtual="true"/>
+    <Font name="hodoFontNormalLarge" inherits="UserScaledFontGameNormalLarge" virtual="true"/> <!-- 16  -->
+
+    <Font name="hodoFontHighlight" inherits="UserScaledFontGameHighlight" virtual="true"/>  <!-- 12, white  -->
+    <Font name="hodoFontHighlightL" inherits="UserScaledFontGameHighlight" justifyH="LEFT" virtual="true"/> 
+    <Font name="hodoFontHighlightR" inherits="UserScaledFontGameHighlight" justifyH="RIGHT" virtual="true"/> 
+    <Font name="hodoFontHighlightSmall" inherits="UserScaledFontGameHighlightSmall" virtual="true"/>  <!-- 10  -->
+    <Font name="hodoFontHighlightSmallL" inherits="UserScaledFontGameHighlightSmall" justifyH="LEFT" virtual="true"/> 
+    <Font name="hodoFontHighlightSmallR" inherits="UserScaledFontGameHighlightSmall" justifyH="RIGHT" virtual="true"/> 
+    
+    <Font name="hodoFontDisable" inherits="UserScaledFontGameDisable" virtual="true"/>  <!-- 12, gray  -->
+    <Font name="hodoFontDisableL" inherits="UserScaledFontGameDisable" justifyH="LEFT" virtual="true"/> 
+    <Font name="hodoFontDisableR" inherits="UserScaledFontGameDisable" justifyH="RIGHT" virtual="true"/> 
+    <Font name="hodoFontDisableSmall" inherits="UserScaledFontGameDisableSmall" virtual="true"/>  <!-- 10  -->
+    <Font name="hodoFontDisableSmallL" inherits="UserScaledFontGameDisableSmall" justifyH="LEFT" virtual="true"/> 
+    <Font name="hodoFontDisableSmallR" inherits="UserScaledFontGameDisableSmall" justifyH="RIGHT" virtual="true"/> 
+</Ui>   

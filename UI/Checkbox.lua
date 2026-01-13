@@ -19,6 +19,7 @@ function Checkbox(category, varName, label, tooltip, default)
 
         if ns.AuctionFilter then ns.AuctionFilter() end
         if ns.DeleteNow then ns.DeleteNow() end
+        if ns.Mykey then ns.Mykey() end
 
     end)
 

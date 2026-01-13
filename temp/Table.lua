@@ -27,13 +27,13 @@ fontTable = {
     { name = "GameFontDisableMed3", color = Gray },
     { name = "GameFontDisableMed2", color = Gray },
     { name = "GameFontHighlightHuge2", color = White },
-    { name = "GameFontNormalHuge2Outline", color = Gold },
+    { name = "GameFontNormalHuge2Outline", color = Gold }, -- 지역변경될때 폰트
     { name = "GameFontHighlightShadowHuge2", color = White },
     { name = "GameFontNormalOutline22", color = GoldDark },
     { name = "GameFontHighlightOutline22", color = White },
     { name = "GameFontDisableOutline22", color = Gray },
     { name = "GameFontNormalHugeOutline", color = Gold },
-    { name = "GameFontHighlightHugeOutline", color = White },
+    { name = "GameFontHighlightHugeOutline", color = White }, -- 지역변경될때 폰트
     { name = "GameFont72Normal", color = Gold },
     { name = "GameFont72Highlight", color = White },
     { name = "GameFont72NormalShadow", color = Gold },
@@ -50,6 +50,7 @@ uiTable = {
     { name = "DefaultPanelBaseTemplate"}, -- 기본창 배경 x
     { name = "SettingsFrameTemplate"}, -- 설정창
     { name = "ButtonFrameTemplate"}, -- 기본창 + 포트레잇 +
+    { name = "StaticPopupBaseTemplate"}, -- 알림창
 }
 
 

@@ -21,6 +21,7 @@ CameraTilt.lua
 ChatBubble.lua
 DeleteNow.lua
 FrameScale.lua
+MyKey.lua
 NewLFG.lua
 Slash.lua
 
@@ -28,7 +29,7 @@ Option.lua
 
 
 #InsDifficulty.lua
-#MyKey.lua
+#
 #PartyClass.lua
 #KeyRoll.lua
 #SkyRiding.lua

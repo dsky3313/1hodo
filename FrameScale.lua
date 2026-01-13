@@ -30,8 +30,6 @@ ns.FrameScale = FrameScale
 local initFrameScale = CreateFrame("Frame")
 initFrameScale:RegisterEvent("PLAYER_LOGIN")
 initFrameScale:SetScript("OnEvent", function(self, event)
-    -- hodoDB = hodoDB or {} 260111
-    -- if hodoCreateOptions then hodoCreateOptions() end 260111
     C_Timer.After(0.5, function() FrameScale() end)
     self:UnregisterAllEvents()
 end)
