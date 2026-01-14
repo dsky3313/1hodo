@@ -40,7 +40,7 @@ local UtilTable = {
 local partyClassFrame = CreateFrame("Frame", "PartyClassFrame", UIParent, "DefaultPanelBaseTemplate")
 partyClassFrame:SetSize(542, 212)
 partyClassFrame:SetPoint("TOPLEFT", PVEFrame, "BOTTOMLEFT", 20, 2)
-partyClassFrame:SetFrameStrata("LOW")
+partyClassFrame:SetFrameStrata("MEDIUM")
 
 
 partyClassFrame.NineSlice.Text = partyClassFrame.NineSlice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -48,8 +48,7 @@ partyClassFrame.NineSlice.Text:SetPoint("TOPRIGHT", partyClassFrame, "TOPRIGHT",
 partyClassFrame.NineSlice.Text:SetText("파티 클래스 현황")
 
 partyClassFrame.Background = partyClassFrame:CreateTexture(nil, "BACKGROUND")
-partyClassFrame.Background:SetAtlas("UI-DialogBox-Background-Dark")
-partyClassFrame.Background:SetAlpha(0.7)
+partyClassFrame.Background:SetAtlas("collections-background-tile")
 partyClassFrame.Background:SetPoint("TOPLEFT", 6, -2)
 partyClassFrame.Background:SetPoint("BOTTOMRIGHT", -2, 2)
 
@@ -77,10 +76,9 @@ local function CreateIcon()
         partyUtilityIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
         partyUtilityIcon.border:SetAllPoints()
 
-        partyUtilityIcon.nameText = partyUtilityIcon:CreateFontString(nil, "OVERLAY", "GameFontNormalMed2Outline")
-        partyUtilityIcon.nameText:SetPoint("LEFT", partyUtilityIcon, "RIGHT", 5, 0)
+        partyUtilityIcon.nameText = partyUtilityIcon:CreateFontString(nil, "OVERLAY", "GameFontNormalSmallOutline")
+        partyUtilityIcon.nameText:SetPoint("TOP", partyUtilityIcon, "BOTTOM", 0, 5)
         partyUtilityIcon.nameText:SetText(data.name)
-        partyUtilityIcon.nameText:SetTextColor(1, 0.82, 0)
 
         local count = 0
         for _, classInfo in ipairs(ClassTable) do
@@ -88,7 +86,7 @@ local function CreateIcon()
             if isMatch then
                 local partyClassIcon = CreateFrame("Frame", nil, partyUtilityIcon)
                 partyClassIcon:SetSize(iconSizeClass, iconSizeClass)
-                partyClassIcon:SetPoint("LEFT", partyUtilityIcon, "RIGHT", 60 + (count * (iconSizeClass + 5)), 0)
+                partyClassIcon:SetPoint("LEFT", partyUtilityIcon, "RIGHT", 20 + (count * (iconSizeClass + 5)), 0)
                 partyClassIcon.classID = classInfo.id
                 count = count + 1
 
@@ -101,7 +99,7 @@ local function CreateIcon()
                 partyClassIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
                 partyClassIcon.border:SetAllPoints()
 
-                partyClassIcon.text = partyClassIcon:CreateFontString(nil, "OVERLAY", "SystemFont_Outline_Small")
+                partyClassIcon.text = partyClassIcon:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
                 partyClassIcon.text:SetPoint("TOP", partyClassIcon, "BOTTOM", 0, 5)
                 partyClassIcon.text:SetText(classInfo.name)
 
