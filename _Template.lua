@@ -6,13 +6,14 @@ hodoDB = hodoDB or {}
 
 local function isIns() -- 인스확인
     local _, instanceType, difficultyID = GetInstanceInfo()
-    return (difficultyID == 1 or instanceType == "raid") -- 1 일반 / 8 쐐기
+    return (difficultyID == 8 or instanceType == "raid") -- 1 일반 / 8 쐐기
 end
+
+local isEnabled = (hodoDB and hodoDB.use기능 ~= false) -- DB
 
 ------------------------------
 -- 디스플레이
 ------------------------------
-local abc = CreateFrame("Frame")
 
 ------------------------------
 -- 동작

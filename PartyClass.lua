@@ -99,10 +99,9 @@ local function CreateIcon()
                 partyClassIcon.border:SetAtlas("UI-HUD-ActionBar-IconFrame")
                 partyClassIcon.border:SetAllPoints()
 
-                partyClassIcon.text = partyClassIcon:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmallOutline")
+                partyClassIcon.text = partyClassIcon:CreateFontString(nil, "OVERLAY", "SystemFont_Outline_Small")
                 partyClassIcon.text:SetPoint("TOP", partyClassIcon, "BOTTOM", 0, 5)
                 partyClassIcon.text:SetText(classInfo.name)
-
                 table.insert(partyClassFrame.ClassIcons, partyClassIcon)
             end
         end
@@ -168,10 +167,10 @@ initPartyClass:SetScript("OnEvent", function(self, event, arg1)
     if event == "PLAYER_ENTERING_WORLD" then
         C_Timer.After(0.5, function()
             if isIns() then
-                self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+                partyClassFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
                 partyClassFrame:Hide()
             else
-                self:RegisterEvent("GROUP_ROSTER_UPDATE")
+                partyClassFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
                 if #partyClassFrame.ClassIcons == 0 then CreateIcon() end
                 PartyClass()
             end
