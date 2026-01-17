@@ -16,8 +16,8 @@ local dungeonName = {
     ["죽음의 상흔"] = "죽상",
     ["티르너 사이드의 안개"] = "티르너",
     ["속죄의 전당"] = "속죄",
-    ["미지의 시장 타자베쉬: 경이의 거리"] = "거리",
-    ["미지의 시장 타자베쉬: 소레아의 승부수"] = "승부수",
+    ["타자베쉬: 경이의 거리"] = "거리",
+    ["타자베쉬: 소레아의 승부수"] = "승부수",
 
     ["부화장"] = "부화장",
     ["새벽인도자호"] = "새인호",
@@ -122,22 +122,40 @@ copyKeyFrame.editBox:SetScript("OnKeyDown", function(self, key)
     end
 end)
 
--- 드롭다운 메뉴 내용물
+-- 드롭다운 메뉴
 keyDropDown:SetupMenu(function(dropdown, rootDescription)
     if InCombatLockdown() then return end
+
+    if IsInGroup() and openRaidLib then
+        openRaidLib.RequestKeystoneDataFromParty()
+    end
+
     local myName, myLevel = GetMyKeyInfo()
     if myName then
         local myTitle = string.format("+%d %s", myLevel, GetMyKeyShortName(myName))
         rootDescription:CreateButton("|cff00ff00[내 돌]|r " .. myTitle, function() ShowCopyWindow(myTitle) end)
     end
+
     if IsInGroup() and openRaidLib then
         local partyKeys = openRaidLib.GetAllKeystonesInfo()
+        local hasPartyKey = false
+
         for name, data in pairs(partyKeys) do
-            if name ~= UnitName("player") then
-                local dName = C_ChallengeMode.GetMapUIInfo(data.challengeMapID)
-                local pTitle = string.format("+%d %s", data.level, GetMyKeyShortName(dName))
-                rootDescription:CreateButton(string.format("|cff00ccff[%s]|r %s", name:gsub("%-.+", ""), pTitle), function() ShowCopyWindow(pTitle) end)
+            if name ~= UnitName("player") and data.challengeMapID then
+                if UnitInParty(name) or UnitInRaid(name) then
+                    local dName = C_ChallengeMode.GetMapUIInfo(data.challengeMapID)
+                    if dName then
+                        hasPartyKey = true
+                        local pTitle = string.format("+%d %s", data.level, GetMyKeyShortName(dName))
+                        local cleanName = name:gsub("%-.+", "") -- 화면 표시용 서버명 제거
+                        rootDescription:CreateButton(string.format("|cff00ccff[%s]|r %s", cleanName, pTitle), function() ShowCopyWindow(pTitle) end)
+                    end
+                end
             end
+        end
+
+        if not hasPartyKey and GetNumGroupMembers() > 1 then
+            rootDescription:CreateButton("|cffaaaaaa(파티원 정보 로딩 중...)|r", function() end)
         end
     end
 end)
@@ -150,27 +168,37 @@ initMyKey:RegisterEvent("ADDON_LOADED")
 initMyKey:RegisterEvent("PLAYER_ENTERING_WORLD")
 initMyKey:SetScript("OnEvent", function (self, event, arg1)
     if event == "PLAYER_ENTERING_WORLD" then
-        C_Timer.After(0.5, function ()
+        C_Timer.After(1.0, function () -- 0.5초에서 1초로 약간 여유를 둠
             if isIns() then
-                initMyKey:UnregisterEvent("BAG_UPDATE_DELAYED")
-                initMyKey:UnregisterEvent("CHALLENGE_MODE_COMPLETED")
-                initMyKey:UnregisterEvent("GROUP_ROSTER_UPDATE")
+                self:UnregisterEvent("BAG_UPDATE_DELAYED")
+                self:UnregisterEvent("CHALLENGE_MODE_COMPLETED")
+                self:UnregisterEvent("GROUP_ROSTER_UPDATE")
             else
-                initMyKey:RegisterEvent("BAG_UPDATE_DELAYED")
-                initMyKey:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-                initMyKey:RegisterEvent("GROUP_ROSTER_UPDATE")
+                self:RegisterEvent("BAG_UPDATE_DELAYED")
+                self:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+                self:RegisterEvent("GROUP_ROSTER_UPDATE")
                 MyKey()
             end
         end)
     elseif event == "ADDON_LOADED" and arg1 == addonName then
-        lfgPlaysStyle:HookScript("OnShow", MyKey)
-        LFGListFrame.EntryCreation:HookScript("OnShow", MyKey)
+        if lfgPlaysStyle then
+            lfgPlaysStyle:HookScript("OnShow", MyKey)
+        end
+        if LFGListFrame.EntryCreation then
+            LFGListFrame.EntryCreation:HookScript("OnShow", MyKey)
+        end
     else
+        -- 필드에서의 데이터 갱신
         if not isIns() then
-            if event == "GROUP_ROSTER_UPDATE" and openRaidLib then
-                openRaidLib.RequestKeystoneDataFromParty()
+            if event == "GROUP_ROSTER_UPDATE" then
+                if openRaidLib then
+                    openRaidLib.RequestKeystoneDataFromParty()
+                end
+                -- 데이터가 도달할 시간을 위해 약간 지연 후 갱신
+                C_Timer.After(1.0, RefreshKeyInfo)
+            else
+                RefreshKeyInfo()
             end
-            RefreshKeyInfo()
         end
     end
 end)

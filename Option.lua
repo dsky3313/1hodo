@@ -22,7 +22,7 @@ function hodoCreateOptions()
     Checkbox(OptionCategory, "DB저장명", "이름", "툴팁", true)
     Slider(OptionCategory, "DB저장명", "이름", "툴팁", 최소값, 최대값, 틱, 기본값, 포매터)
     DropDown(OptionCategory, "DB저장명", "이름", "툴팁", 테이블, 테이블[1].value)
-    CheckBoxDropDown(OptionCategory, "체크박스DB저장명", "드롭다운DB저장명", "이름", "툴팁", 테이블, true, 테이블[1].value)
+    CheckBoxDropDown(OptionCategory, "체크박스DB저장명", "드롭다운DB저장명", "이름", "툴팁", 테이블, true, 테이블[1].value, ns.함수명)
     ]]
 
     -- 글꼴
@@ -39,17 +39,24 @@ function hodoCreateOptions()
     Slider(OptionCategory, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
 
     -- 파티
-    local CameraFrame = CreateSettingsListSectionHeaderInitializer("파티")
-    hodoOptionLayout:AddInitializer(CameraFrame)
+    local PartyQoLFrame = CreateSettingsListSectionHeaderInitializer("파티")
+    hodoOptionLayout:AddInitializer(PartyQoLFrame)
+    Checkbox(OptionCategory, "useKeyRoll", "쐐기돌 굴림 알림", "쐐기 완료 후, 파티원의 돌목록과 돌변경 알림을 띄웁니다.", true)
     Checkbox(OptionCategory, "useMyKey", "쐐기 던전명 복사", "파티 생성창에서 파티원의 쐐기돌 이름을 복사할 수 있습니다.", true)
     Checkbox(OptionCategory, "usePartyClass", "클래스 현황", "파티원의 유틸 현황을 확인할 수 있습니다.", true)
-    CheckBoxDropDown(OptionCategory, "useNewLFG", "soundID", "파티신청 알림", "새로운 파티신청 시 알림", NewLFG_AlertSoundTable, true, NewLFG_AlertSoundTable[2].value)
+    CheckBoxDropDown(OptionCategory, "useNewLFG", "soundID", "파티신청 알림", "새로운 파티신청 시 알림", NewLFG_AlertSoundTable, true, NewLFG_AlertSoundTable[2].value, ns.NewLFG)
+
+    Checkbox(OptionCategory, "useInsDifficulty", "던전 난이도 고정", "솔플 혹은 파티장일 시, 던전 난이도를 자동으로 변경합니다.", true)
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyDungeon", "InsDifficultyDungeon", "던전 난이도", "던전 난이도를 고정합니다.", difficultyTable.dungeon, true, difficultyTable.dungeon[3].value, ns.InsDifficulty)
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyRaid", "InsDifficultyRaid", "공격대 난이도", "공격대 난이도를 고정합니다.", difficultyTable.raid, true, difficultyTable.raid[3].value, ns.InsDifficulty)
+    CheckBoxDropDown(OptionCategory, "useInsDifficultyLegacy", "InsDifficultyLegacy", "낭만 난이도", "낭만 난이도를 고정합니다.", difficultyTable.legacy, true, difficultyTable.legacy[2].value, ns.InsDifficulty)
 
     -- 편의기능
     local QoLHeader = CreateSettingsListSectionHeaderInitializer("편의기능")
     hodoOptionLayout:AddInitializer(QoLHeader)
     Checkbox(OptionCategory, "useAuctionFilter", "경매장 필터", "경매장에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
     Checkbox(OptionCategory, "useCraftFilter", "주문제작 필터", "주문제작에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
+    Checkbox(OptionCategory, "useQuickBobber", "낚시찌 장난감", "낚시버튼 옆에 낚시찌 장난감", true)
     local settingParentDeleteNow, initParentDeleteNow = Checkbox(OptionCategory, "deleteNowAutoFill", "\"지금파괴\" 자동기입", "아이템 파괴 확인 메시지를 자동으로 입력합니다.", true)
     local settingChildDeleteNow, initChildDeleteNow = Checkbox(OptionCategory, "deleteNowHideEditbox", "아이템 파괴 간소화", "확인 메시지를 없애고 확인버튼만 남깁니다.", true)
     if settingParentDeleteNow and settingChildDeleteNow then

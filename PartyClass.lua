@@ -38,7 +38,7 @@ local UtilTable = {
 -- 디스플레이
 ------------------------------
 local partyClassFrame = CreateFrame("Frame", "PartyClassFrame", UIParent, "DefaultPanelBaseTemplate")
-partyClassFrame:SetSize(542, 212)
+partyClassFrame:SetSize(542, 214)
 partyClassFrame:SetPoint("TOPLEFT", PVEFrame, "BOTTOMLEFT", 20, 2)
 partyClassFrame:SetFrameStrata("MEDIUM")
 

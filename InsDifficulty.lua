@@ -3,6 +3,11 @@
 ------------------------------
 local addonName, ns = ...
 
+local function isIns() -- 인스확인
+    local _, instanceType, difficultyID = GetInstanceInfo()
+    return (difficultyID == 8 or instanceType == "raid") -- 1 일반 / 8 쐐기
+end
+
 difficultyTable = {
     dungeon = {{label="일반", value="1"}, {label="영웅", value="2"}, {label="신화", value="23"}},
     raid = {{label="일반", value="14"}, {label="영웅", value="15"}, {label="신화", value="16"}},
@@ -12,22 +17,16 @@ difficultyTable = {
 local GetDungeonDifficultyID = GetDungeonDifficultyID
 local GetRaidDifficultyID = GetRaidDifficultyID
 local GetLegacyRaidDifficultyID = GetLegacyRaidDifficultyID
-local InCombatLockdown = InCombatLockdown
-local IsInGroup, IsInRaid, IsInInstance = IsInGroup, IsInRaid, IsInInstance
 local SetDungeonDifficultyID = SetDungeonDifficultyID
 local SetRaidDifficultyID = SetRaidDifficultyID
 local SetLegacyRaidDifficultyID = SetLegacyRaidDifficultyID
-local ResetInstances = ResetInstances
 local tonumber, unpack, pairs, ipairs = tonumber, unpack, pairs, ipairs
-local UnitIsGroupLeader = UnitIsGroupLeader
 
-local currentDiffCache = { dungeon = 23, raid = 16, legacy = 4 }
 local currentDiff = { dungeon = 0, raid = 0, legacy = 0 }
-local NORMAL_COLOR = {1, 0.82, 0}
-local SELECTED_COLOR = {1, 1, 1}
+local buttons = { dungeon = {}, raid = {}, legacy = {} }
+local NORMAL_COLOR, SELECTED_COLOR = {1, 0.82, 0}, {1, 1, 1}
 local btn_select = "UI-Frame-DastardlyDuos-Bar-Frame-gold"
 local btn_highlight = "glues-characterSelect-nameBG"
-local buttons = { dungeon = {}, raid = {}, legacy = {} }
 
 ------------------------------
 -- 디스플레이
@@ -99,7 +98,7 @@ for i, data in ipairs(difficultyTable.dungeon) do CreateDifficultyButton(row1, "
 local row2 = CreateCategoryRow(difficultyFrame, -55, "공격대")
 for i, data in ipairs(difficultyTable.raid) do CreateDifficultyButton(row2, "raid", i, data) end
 
-local row3 = CreateCategoryRow(difficultyFrame, -85, "낭만")
+local row3 = CreateCategoryRow(difficultyFrame, -85, "낭만")    
 for i, data in ipairs(difficultyTable.legacy) do CreateDifficultyButton(row3, "legacy", i, data) end
 
 local resetBtn = CreateFrame("Button", nil, difficultyFrame.NineSlice, "SquareIconButtonTemplate")
@@ -111,19 +110,14 @@ resetBtn:SetFrameLevel(difficultyFrame.NineSlice:GetFrameLevel() + 10)
 ------------------------------
 -- 동작
 ------------------------------
-
--- 활성조건 (전투 체크 삭제)
 local function checkPermission()
-    local inInstance, instanceType = IsInInstance()
-    if inInstance and instanceType ~= "none" then return false end
+    if isIns() then return false end
     return (not IsInGroup() and not IsInRaid()) or UnitIsGroupLeader("player")
 end
 
--- UI 업데이트
 local function UpdateUIStatus(forceCategory, forceValue)
-    local inInstance, instanceType = IsInInstance()
-    
-    if inInstance and instanceType ~= "none" then
+    local isEnabled = (hodoDB and hodoDB.useInsDifficulty ~= false)
+    if not isEnabled or isIns() then
         if difficultyFrame:IsShown() then difficultyFrame:Hide() end
         return
     else
@@ -131,59 +125,36 @@ local function UpdateUIStatus(forceCategory, forceValue)
     end
 
     local hasPermission = checkPermission()
-    
-    -- 현재 시스템 난이도 갱신
     currentDiff.dungeon = GetDungeonDifficultyID()
     currentDiff.raid = GetRaidDifficultyID()
     currentDiff.legacy = GetLegacyRaidDifficultyID()
 
     for category, group in pairs(buttons) do
-        -- [핵심 수정] forceValue가 들어오면 무조건 그 값을 우선 (시스템 지연 무시)
-        -- forceValue가 문자열일 수 있으므로 tonumber로 확실히 비교
         local targetVal = (category == forceCategory) and tonumber(forceValue) or tonumber(currentDiff[category])
-
-        for _, btn in pairs(group) do   
+        for _, btn in pairs(group) do
             btn:SetEnabled(hasPermission)
             btn:SetAlpha(hasPermission and 1 or 0.5)
-
-            local btnVal = tonumber(btn.value)
-            
-            -- 비교 로직을 단순화하고 명확하게 처리
-            if btnVal == targetVal then
-                btn.highlightBg:SetAtlas(btn_select)
-                btn.highlightBg:Show()
-                btn.text:SetTextColor(unpack(SELECTED_COLOR))
-                btn.isSelected = true
-            else
-                btn.highlightBg:SetAtlas(btn_highlight)
-                btn.highlightBg:Hide()
-                btn.text:SetTextColor(unpack(NORMAL_COLOR))
-                btn.isSelected = false
-            end
+            local isSelected = (tonumber(btn.value) == targetVal)
+            btn.highlightBg:SetAtlas(isSelected and btn_select or btn_highlight)
+            btn.highlightBg:SetShown(isSelected)
+            btn.text:SetTextColor(unpack(isSelected and SELECTED_COLOR or NORMAL_COLOR))
+            btn.isSelected = isSelected
         end
     end
 end
 
 local function OnDifficultyClick(self)
     if not checkPermission() then return end
-
     local val = tonumber(self.value)
-    if self.category == "dungeon" then
-        SetDungeonDifficultyID(val)
-    elseif self.category == "raid" then 
-        SetRaidDifficultyID(val)
-    elseif self.category == "legacy" then 
-        SetLegacyRaidDifficultyID(val)
-    end
-
-    print(string.format("|cff00ff00[알림]|r %s 난이도 변경: |cffffffff[%s]|r", self.category, self.label))
+    if self.category == "dungeon" then SetDungeonDifficultyID(val)
+    elseif self.category == "raid" then SetRaidDifficultyID(val)
+    elseif self.category == "legacy" then SetLegacyRaidDifficultyID(val) end
     PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     UpdateUIStatus(self.category, val)
 end
 
-local function SyncDifficultyWithDB()
+local function InsDifficulty()
     if not checkPermission() or not hodoDB then return end
-
     if hodoDB.useInsDifficultyDungeon and hodoDB.InsDifficultyDungeon then
         SetDungeonDifficultyID(tonumber(hodoDB.InsDifficultyDungeon))
     end
@@ -196,43 +167,11 @@ local function SyncDifficultyWithDB()
     UpdateUIStatus()
 end
 
-------------------------------
--- 이벤트
-------------------------------
-local initInsDifficulty = CreateFrame("Frame")
-initInsDifficulty:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
-initInsDifficulty:RegisterEvent("PARTY_LEADER_CHANGED")
-initInsDifficulty:RegisterEvent("GROUP_ROSTER_UPDATE")
-initInsDifficulty:RegisterEvent("PLAYER_ENTERING_WORLD")
-initInsDifficulty:RegisterEvent("ADDON_LOADED")
-
-initInsDifficulty:SetScript("OnEvent", function(self, event, arg1)
-    if event == "ADDON_LOADED" and arg1 == "1hodo" then
-        hodoDB = hodoDB or {}
-        UpdateUIStatus()
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "PARTY_LEADER_CHANGED" then
-        SyncDifficultyWithDB()
-    else
-        UpdateUIStatus()
-    end
-end)
-
 for _, group in pairs(buttons) do
     for _, btn in pairs(group) do
-        btn:SetScript("OnEnter", function(self)
-            if not self.isSelected then
-                self.highlightBg:SetAtlas(btn_highlight)
-                self.highlightBg:Show()
-                self.text:SetTextColor(unpack(SELECTED_COLOR))
-            end
-        end)
-        btn:SetScript("OnLeave", function(self)
-            if not self.isSelected then
-                self.highlightBg:Hide()
-                self.text:SetTextColor(unpack(NORMAL_COLOR))
-            end
-        end)
         btn:SetScript("OnClick", OnDifficultyClick)
+        btn:SetScript("OnEnter", function(s) if not s.isSelected then s.highlightBg:SetAtlas(btn_highlight) s.highlightBg:Show() s.text:SetTextColor(unpack(SELECTED_COLOR)) end end)
+        btn:SetScript("OnLeave", function(s) if not s.isSelected then s.highlightBg:Hide() s.text:SetTextColor(unpack(NORMAL_COLOR)) end end)
     end
 end
 
@@ -244,5 +183,36 @@ resetBtn:SetScript("OnClick", function()
     end
 end)
 
-ns.setDifficulty = SyncDifficultyWithDB
+------------------------------
+-- 이벤트
+------------------------------
+local initInsDifficulty = CreateFrame("Frame")
+initInsDifficulty:RegisterEvent("ADDON_LOADED")
+initInsDifficulty:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+initInsDifficulty:SetScript("OnEvent", function(self, event, arg1)
+    if event == "ADDON_LOADED" and arg1 == addonName then
+        hodoDB = hodoDB or {}
+        UpdateUIStatus()
+
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        C_Timer.After(0.5, function()
+            if isIns() then
+                initInsDifficulty:UnregisterEvent("GROUP_ROSTER_UPDATE")
+                initInsDifficulty:UnregisterEvent("PARTY_LEADER_CHANGED")
+                initInsDifficulty:UnregisterEvent("PLAYER_DIFFICULTY_CHANGED")
+                UpdateUIStatus()
+            else
+                initInsDifficulty:RegisterEvent("GROUP_ROSTER_UPDATE")
+                initInsDifficulty:RegisterEvent("PARTY_LEADER_CHANGED")
+                initInsDifficulty:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
+                InsDifficulty()
+            end
+        end)
+    else
+        UpdateUIStatus()
+    end
+end)
+
+ns.InsDifficulty = InsDifficulty
 UpdateUIStatus()

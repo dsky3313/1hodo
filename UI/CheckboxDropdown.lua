@@ -40,7 +40,9 @@ function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, option
 
     local function OnValueChanged()
 
-        if ns.NewLFG then ns.NewLFG() end
+        if type(func) == "function" then
+            func(true)
+        end
 
     end
     cbSetting:SetValueChangedCallback(OnValueChanged)

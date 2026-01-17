@@ -247,12 +247,12 @@ for i, data in ipairs(teleportTable) do
             row = row + 1; col = 0; currentCategory = data.category
             local expinfo = expLookup[data.category]
             local yPos = START_Y - (row * ROW_HEIGHT)
-            
+
             local expTexture = TeleportBackground:CreateTexture(nil, "ARTWORK")
             expTexture:SetSize(BUTTON_SIZE, BUTTON_SIZE)
             expTexture:SetPoint("TOPLEFT", TeleportBackground, "TOPLEFT", ICON_X, yPos)
             expTexture:SetTexture(expinfo and expinfo.iconID or 132311)
-            
+
             local mask = TeleportBackground:CreateMaskTexture()
             mask:SetAllPoints(expTexture); mask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
             expTexture:AddMaskTexture(mask)

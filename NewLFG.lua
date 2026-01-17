@@ -20,7 +20,6 @@ NewLFG_AlertSoundTable = {
 }
 
 local alertTimer
-local apps = C_LFGList.GetApplicants()
 local armedAt = 0
 local lastApps = 0
 local lastTrig = 0
@@ -38,24 +37,28 @@ newLFG_Alert.Text:SetPoint("CENTER")
 newLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인하세요!")
 
 ------------------------------
--- 동작 (행동 대장)
+-- 동작
 ------------------------------
-function NewLFG()
-    if isIns() or InCombatLockdown() then return end
+function NewLFG(isManual)
+    if not isManual then
+        if isIns() or InCombatLockdown() then return end
+    end
 
-    if GroupFinderFrame and not GroupFinderFrame:IsVisible() then
-        PVEFrame_ShowFrame("GroupFinderFrame")
-        if GroupFinderFrameGroupButton3 then
-            GroupFinderFrameGroupButton3:Click()
+if not isManual then
+        if GroupFinderFrame and not GroupFinderFrame:IsVisible() then
+            PVEFrame_ShowFrame("GroupFinderFrame")
+            if GroupFinderFrameGroupButton3 then
+                GroupFinderFrameGroupButton3:Click()
+            end
         end
+
+        newLFG_Alert:Show()
+        if alertTimer then alertTimer:Cancel() end
+        alertTimer = C_Timer.After(7, function() newLFG_Alert:Hide() end)
     end
 
     local soundID = (hodoDB and hodoDB.soundID) or "5274"
-    PlaySound(soundID, "Master")
-
-    newLFG_Alert:Show()
-    if alertTimer then alertTimer:Cancel() end -- 타이머 중첩 방지
-    alertTimer = C_Timer.After(7, function() newLFG_Alert:Hide() end)
+    PlaySound(tonumber(soundID), "Master")
 end
 
 ------------------------------
