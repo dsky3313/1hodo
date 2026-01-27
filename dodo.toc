@@ -15,7 +15,7 @@ UI/Slider.lua
 UI/CheckboxDropdown.lua
 UI/CheckboxSlider.lua
 
-AuctionFilter.lua
+ExpFilter.lua
 #BrowseGroup.lua
 #CameraTilt.lua
 #ChatBubble.lua
@@ -35,6 +35,6 @@ AuctionFilter.lua
 
 #SkyRiding.lua
 
-#Slash.lua
+Slash.lua
 
 Option.lua

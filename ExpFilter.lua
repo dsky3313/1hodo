@@ -10,6 +10,7 @@ local function isIns() -- 인스확인
 end
 
 local AHF = Enum.AuctionHouseFilter.CurrentExpansionOnly
+
 ------------------------------
 -- 동작
 ------------------------------
@@ -39,7 +40,7 @@ local function checkCraftFilter()
 end
 
 -- 통합 실행 함수 (외부 공유용)
-function ns.AuctionFilter()
+function ns.expFilter()
     checkAuctionFilter()
     checkCraftFilter()
 end
@@ -60,7 +61,7 @@ initFilterFrame:SetScript("OnEvent", function(self, event, arg1)
             else
                 initFilterFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
                 initFilterFrame:RegisterEvent("CRAFTINGORDERS_SHOW_CUSTOMER")
-                ns.AuctionFilter()
+                ns.expFilter()
             end
         end)
     elseif event == "ADDON_LOADED" and arg1 == "Blizzard_AuctionHouseUI" then
