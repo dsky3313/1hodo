@@ -26,21 +26,22 @@ function dodoCreateOptions()
     ]]
 
     -- 글꼴
-    -- local ChatBubbleFrame = CreateSettingsListSectionHeaderInitializer("글꼴")
-    -- dodoOptionLayout:AddInitializer(ChatBubbleFrame)
-    -- DropDown(OptionCategory, "chatbubbleFontPath", "말풍선 글꼴", "말풍선에 적용할 폰트를 선택하세요.", fontOption, fontOption[1].value)
-    -- Slider(OptionCategory, "chatbubbleFontSize", "말풍선 글꼴 크기", "말풍선 글꼴 크기를 변경합니다.", 8, 14, 1, 10, "Integer")
+    local ChatBubbleFrame = CreateSettingsListSectionHeaderInitializer("글꼴")
+    dodoOptionLayout:AddInitializer(ChatBubbleFrame)
+    DropDown(OptionCategory, "chatbubbleFontPath", "말풍선 글꼴", "말풍선에 적용할 폰트를 선택하세요.", fontOption, fontOption[1].value)
+    Slider(OptionCategory, "chatbubbleFontSize", "말풍선 글꼴 크기", "말풍선 글꼴 크기를 변경합니다.", 8, 14, 1, 10, "Integer")
 
-    -- -- 카메라
-    -- local CameraFrame = CreateSettingsListSectionHeaderInitializer("카메라 시점")
-    -- dodoOptionLayout:AddInitializer(CameraFrame)
-    -- Slider(OptionCategory, "cameraBase", "기본 시점", "기본시점 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
-    -- Slider(OptionCategory, "cameraDown", "탑다운 뷰", "수직으로 내렸을 때 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
-    -- Slider(OptionCategory, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
+    -- 카메라
+    local CameraFrame = CreateSettingsListSectionHeaderInitializer("카메라 시점")
+    dodoOptionLayout:AddInitializer(CameraFrame)
+    Slider(OptionCategory, "cameraBase", "기본 시점", "기본시점 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2")
+    Slider(OptionCategory, "cameraDown", "탑다운 뷰", "수직으로 내렸을 때 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2")
+    Slider(OptionCategory, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2")
 
-    -- -- 파티
-    -- local PartyQoLFrame = CreateSettingsListSectionHeaderInitializer("파티")
-    -- dodoOptionLayout:AddInitializer(PartyQoLFrame)
+    -- 파티
+    local PartyQoLFrame = CreateSettingsListSectionHeaderInitializer("파티")
+    dodoOptionLayout:AddInitializer(PartyQoLFrame)
+    Checkbox(OptionCategory, "useBrowseGroup", "파티 탐색하기 버튼", "파티장이 ", true)
     -- Checkbox(OptionCategory, "useKeyRoll", "쐐기돌 굴림 알림", "쐐기 완료 후, 파티원의 돌목록과 돌변경 알림을 띄웁니다.", true)
     -- Checkbox(OptionCategory, "useMyKey", "쐐기 던전명 복사", "파티 생성창에서 파티원의 쐐기돌 이름을 복사할 수 있습니다.", true)
     -- Checkbox(OptionCategory, "usePartyClass", "클래스 현황", "파티원의 유틸 현황을 확인할 수 있습니다.", true)
@@ -57,18 +58,18 @@ function dodoCreateOptions()
     Checkbox(OptionCategory, "useAuctionFilter", "경매장 필터", "경매장에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
     Checkbox(OptionCategory, "useCraftFilter", "주문제작 필터", "주문제작에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
     -- Checkbox(OptionCategory, "useQuickBobber", "낚시찌 장난감", "낚시버튼 옆에 낚시찌 장난감", true)
-    -- local settingParentDeleteNow, initParentDeleteNow = Checkbox(OptionCategory, "deleteNowAutoFill", "\"지금파괴\" 자동기입", "아이템 파괴 확인 메시지를 자동으로 입력합니다.", true)
-    -- local settingChildDeleteNow, initChildDeleteNow = Checkbox(OptionCategory, "deleteNowHideEditbox", "아이템 파괴 간소화", "확인 메시지를 없애고 확인버튼만 남깁니다.", true)
-    -- if settingParentDeleteNow and settingChildDeleteNow then
-    --     settingParentDeleteNow:SetValueChangedCallback(function(_, value)
-    --         if value == false then
-    --             settingChildDeleteNow:SetValue(false) -- 부모가 꺼지면 자식도 끔
-    --         end
-    --     end)
-    --     initChildDeleteNow:SetParentInitializer(initParentDeleteNow, function()
-    --         return settingParentDeleteNow:GetValue()
-    --     end)
-    -- end
+    local settingParentDeleteNow, initParentDeleteNow = Checkbox(OptionCategory, "deleteNowAutoFill", "\"지금파괴\" 자동기입", "아이템 파괴 확인 메시지를 자동으로 입력합니다.", true)
+    local settingChildDeleteNow, initChildDeleteNow = Checkbox(OptionCategory, "deleteNowHideEditbox", "아이템 파괴 간소화", "확인 메시지를 없애고 확인버튼만 남깁니다.", true)
+    if settingParentDeleteNow and settingChildDeleteNow then
+        settingParentDeleteNow:SetValueChangedCallback(function(_, value)
+            if value == false then
+                settingChildDeleteNow:SetValue(false) -- 부모가 꺼지면 자식도 끔
+            end
+        end)
+        initChildDeleteNow:SetParentInitializer(initParentDeleteNow, function()
+            return settingParentDeleteNow:GetValue()
+        end)
+    end
 
     -- local FrameScaleHeader = CreateSettingsListSectionHeaderInitializer("프레임 크기조절")
     -- dodoOptionLayout:AddInitializer(FrameScaleHeader)

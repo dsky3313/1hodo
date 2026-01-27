@@ -2,15 +2,15 @@
 -- 테이블
 ------------------------------
 local addonName, ns = ...
+dodoDB = dodoDB or {}
 
 ------------------------------
 -- 동작
 ------------------------------
 local function CameraTilt()
-    local db = hodoDB or {}
-    local base       = db.cameraBase or 0.55
-    local baseDown   = db.cameraDown or 0.55
-    local baseFlying = db.cameraFlying or 0.55
+    local base = dodoDB.cameraBase or 0.55
+    local baseDown = dodoDB.cameraDown or 0.55
+    local baseFlying = dodoDB.cameraFlying or 0.55
 
     SetCVar("test_cameraDynamicPitch", 1)
     SetCVar("CameraKeepCharacterCentered", 0)
@@ -26,7 +26,8 @@ local initCamera = CreateFrame("Frame")
 initCamera:RegisterEvent("PLAYER_LOGIN")
 initCamera:SetScript("OnEvent", function(self, event)
     UIParent:UnregisterEvent("EXPERIMENTAL_CVAR_CONFIRMATION_NEEDED")
-    if CameraTilt then CameraTilt()
+    if CameraTilt then
+        CameraTilt()
     end
     self:UnregisterAllEvents()
 end)

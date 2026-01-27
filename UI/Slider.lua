@@ -14,17 +14,17 @@ local Formatters = {
 -- 슬라이더
 ------------------------------
 function Slider(category, varName, label, tooltip, min, max, step, default, formatType)
-    local varID = "hodo_" .. varName
+    local varID = "dodo_" .. varName
 
     local setting = Settings.GetSetting(varID)
     if not setting then
-        setting = Settings.RegisterAddOnSetting(category, varID, varName, hodoDB, Settings.VarType.Number, label, default or 0)
+        setting = Settings.RegisterAddOnSetting(category, varID, varName, dodoDB, Settings.VarType.Number, label, default or 0)
     end
 
     local sliderOptions = Settings.CreateSliderOptions(min, max, step)
     local selectedFormatter = Formatters[formatType] or Formatters["Percent"]
     sliderOptions:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, selectedFormatter)
-    local initializer = Settings.CreateControlInitializer("hodoSliderTemplate", setting, sliderOptions, tooltip)
+    local initializer = Settings.CreateControlInitializer("dodoSliderTemplate", setting, sliderOptions, tooltip)
     setting:SetValueChangedCallback(function()
 
         if ns.CameraTilt then ns.CameraTilt() end

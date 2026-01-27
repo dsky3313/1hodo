@@ -15,11 +15,12 @@ UI/Slider.lua
 UI/CheckboxDropdown.lua
 UI/CheckboxSlider.lua
 
+BrowseGroup.lua
+CameraTilt.lua
+ChatBubble.lua
+DeleteNow.lua
 ExpFilter.lua
-#BrowseGroup.lua
-#CameraTilt.lua
-#ChatBubble.lua
-#DeleteNow.lua
+
 #FrameScale.lua
 #InsDifficulty.lua
 #KeyRoll.lua
@@ -37,4 +38,4 @@ ExpFilter.lua
 
 Slash.lua
 
-Option.lua
+_Option.lua

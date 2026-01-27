@@ -17,7 +17,8 @@ function Checkbox(category, varName, label, tooltip, default)
     local initializer = Settings.CreateControlInitializer("dodoCheckboxTemplate", setting, nil, tooltip)
     setting:SetValueChangedCallback(function()
 
-        if ns.AuctionFilter then ns.AuctionFilter() end
+        if ns.browseGroupsButton then ns.browseGroupsButton() end
+        if ns.expFilter then ns.expFilter() end
         if ns.DeleteNow then ns.DeleteNow() end
         if ns.Mykey then ns.Mykey() end
         if ns.PartyClass then ns.PartyClass() end

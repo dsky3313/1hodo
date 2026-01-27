@@ -2,6 +2,12 @@
 -- 테이블
 ------------------------------
 local addonName, ns = ...
+dodoDB = dodoDB or {}
+
+local function isIns() -- 인스확인
+    local _, instanceType, difficultyID = GetInstanceInfo()
+    return (difficultyID == 8 or instanceType == "raid") -- 1 일반 / 8 쐐기 / raid 레이드
+end
 
 ------------------------------
 -- 디스플레이
@@ -11,17 +17,13 @@ local DeleteItemLink = StaticPopup1:CreateFontString(nil, "OVERLAY", "GameFontNo
 DeleteItemLink:SetPoint("CENTER", StaticPopup1, "CENTER", 0, 10)
 DeleteItemLink:Hide()
 
--- 안내 문구 제거
-local localizedDeleteMsg = ""
+local localizedDeleteMsg = "" -- 안내 문구 제거
+local cachedDeleteWord = "" -- 자동 기입용 단어
+
 do
     local _, secondPart = strsplit("@", gsub(DELETE_GOOD_ITEM, "[\r\n]", "@"), 2)
     localizedDeleteMsg = gsub(secondPart or "", "%%s", "")
     localizedDeleteMsg = gsub(localizedDeleteMsg, "@", "")
-end
-
--- 자동 기입용 단어
-local cachedDeleteWord = ""
-do
     local rawText = gsub(DELETE_GOOD_ITEM, "[\r\n]", "")
     cachedDeleteWord = select(2, strsplit('"', rawText)) or "삭제"
 end
@@ -29,15 +31,10 @@ end
 ------------------------------
 -- 동작
 ------------------------------
-local function isIns()
-    local _, instanceType, difficultyID = GetInstanceInfo()
-    return (difficultyID == 8 or instanceType == "raid") -- 1 일반 / 8 쐐기
-end
-
 local function DeleteNow()
     if isIns() then return end
 
-    local db = hodoDB or {}
+    local db = dodoDB or {}
     local _, _, itemLink = GetCursorInfo()
 
     if not StaticPopup1 or not StaticPopup1EditBox then return end

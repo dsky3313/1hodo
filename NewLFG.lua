@@ -21,6 +21,7 @@ NewLFG_AlertSoundTable = {
 
 local alertTimer
 local armedAt = 0
+local isLeader = UnitIsGroupLeader("player") == true
 local lastApps = 0
 local lastTrig = 0
 
