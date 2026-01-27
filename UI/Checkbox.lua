@@ -7,14 +7,14 @@ local addonName, ns = ...
 -- 체크박스
 ------------------------------
 function Checkbox(category, varName, label, tooltip, default)
-    local varID = "hodo_" .. varName
+    local varID = "dodo_" .. varName
 
     local setting = Settings.GetSetting(varID)
     if not setting then
-        setting = Settings.RegisterAddOnSetting(category, varID, varName, hodoDB, Settings.VarType.Boolean, label, default)
+        setting = Settings.RegisterAddOnSetting(category, varID, varName, dodoDB, Settings.VarType.Boolean, label, default)
     end
 
-    local initializer = Settings.CreateControlInitializer("hodoCheckboxTemplate", setting, nil, tooltip)
+    local initializer = Settings.CreateControlInitializer("dodoCheckboxTemplate", setting, nil, tooltip)
     setting:SetValueChangedCallback(function()
 
         if ns.AuctionFilter then ns.AuctionFilter() end

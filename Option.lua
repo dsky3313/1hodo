@@ -1,21 +1,21 @@
 ------------------------------
--- 테이블 /run hodoDB = nil; ReloadUI()
+-- 테이블 /run dodoDB = nil; ReloadUI()
 ------------------------------
 local addonName, ns = ...
-hodoDB = hodoDB or {}
+dodoDB = dodoDB or {}
 
-local OptionCategory = Settings.RegisterVerticalLayoutCategory("hodo")
+local OptionCategory = Settings.RegisterVerticalLayoutCategory("dodo")
 Settings.RegisterAddOnCategory(OptionCategory)
 
 
 ------------------------------
 -- 동작
 ------------------------------
-function hodoCreateOptions()
-    if hodoOptionsCreated then return OptionCategory end
+function dodoCreateOptions()
+    if dodoOptionsCreated then return OptionCategory end
 
-    local hodoOptionLayout = SettingsPanel:GetLayout(OptionCategory)
-    if not hodoOptionLayout then return end
+    local dodoOptionLayout = SettingsPanel:GetLayout(OptionCategory)
+    if not dodoOptionLayout then return end
 
     -- 설정값 등록
     --[[
@@ -27,20 +27,20 @@ function hodoCreateOptions()
 
     -- 글꼴
     local ChatBubbleFrame = CreateSettingsListSectionHeaderInitializer("글꼴")
-    hodoOptionLayout:AddInitializer(ChatBubbleFrame)
+    dodoOptionLayout:AddInitializer(ChatBubbleFrame)
     DropDown(OptionCategory, "chatbubbleFontPath", "말풍선 글꼴", "말풍선에 적용할 폰트를 선택하세요.", fontOption, fontOption[1].value)
     Slider(OptionCategory, "chatbubbleFontSize", "말풍선 글꼴 크기", "말풍선 글꼴 크기를 변경합니다.", 8, 14, 1, 10, "Integer")
 
     -- 카메라
     local CameraFrame = CreateSettingsListSectionHeaderInitializer("카메라 시점")
-    hodoOptionLayout:AddInitializer(CameraFrame)
+    dodoOptionLayout:AddInitializer(CameraFrame)
     Slider(OptionCategory, "cameraBase", "기본 시점", "기본시점 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
     Slider(OptionCategory, "cameraDown", "탑다운 뷰", "수직으로 내렸을 때 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
     Slider(OptionCategory, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.", 0.3, 1.0, 0.05, 0.55, "Decimal2")
 
     -- 파티
     local PartyQoLFrame = CreateSettingsListSectionHeaderInitializer("파티")
-    hodoOptionLayout:AddInitializer(PartyQoLFrame)
+    dodoOptionLayout:AddInitializer(PartyQoLFrame)
     Checkbox(OptionCategory, "useKeyRoll", "쐐기돌 굴림 알림", "쐐기 완료 후, 파티원의 돌목록과 돌변경 알림을 띄웁니다.", true)
     Checkbox(OptionCategory, "useMyKey", "쐐기 던전명 복사", "파티 생성창에서 파티원의 쐐기돌 이름을 복사할 수 있습니다.", true)
     Checkbox(OptionCategory, "usePartyClass", "클래스 현황", "파티원의 유틸 현황을 확인할 수 있습니다.", true)
@@ -53,7 +53,7 @@ function hodoCreateOptions()
 
     -- 편의기능
     local QoLHeader = CreateSettingsListSectionHeaderInitializer("편의기능")
-    hodoOptionLayout:AddInitializer(QoLHeader)
+    dodoOptionLayout:AddInitializer(QoLHeader)
     Checkbox(OptionCategory, "useAuctionFilter", "경매장 필터", "경매장에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
     Checkbox(OptionCategory, "useCraftFilter", "주문제작 필터", "주문제작에서 '현행 확장팩 전용'을 자동 활성화합니다.", true)
     Checkbox(OptionCategory, "useQuickBobber", "낚시찌 장난감", "낚시버튼 옆에 낚시찌 장난감", true)
@@ -71,13 +71,13 @@ function hodoCreateOptions()
     end
 
     local FrameScaleHeader = CreateSettingsListSectionHeaderInitializer("프레임 크기조절")
-    hodoOptionLayout:AddInitializer(FrameScaleHeader)
+    dodoOptionLayout:AddInitializer(FrameScaleHeader)
     Slider(OptionCategory, "frameScale_gmf", "게임 메뉴", "게임 메뉴 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.9, "Percent")
     Slider(OptionCategory, "frameScale_mmbbb", "가방버튼", "가방버튼 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.7, "Percent")
     Slider(OptionCategory, "frameScale_th", "말머리", "말머리 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.8, "Percent")
     ---
 
-    hodoOptionsCreated = true
+    dodoOptionsCreated = true
     return OptionCategory
 end
 
@@ -88,17 +88,17 @@ end
 local initOptionFrame = CreateFrame("Frame")
 initOptionFrame:RegisterEvent("PLAYER_LOGIN")
 initOptionFrame:SetScript("OnEvent", function()
-    hodoCreateOptions()
+    dodoCreateOptions()
 end)
 
 ------------------------------
 -- 명령어
 ------------------------------
-SLASH_hodo1 = "/hh"
-SLASH_hodo2 = "/ㅗㅗ"
-SlashCmdList["hodo"] = function()
+SLASH_dodo1 = "/hh"
+SLASH_dodo2 = "/ㅗㅗ"
+SlashCmdList["dodo"] = function()
     if InCombatLockdown() then
-        print("|cffff0000hodo: 전투 중에는 설정창을 열 수 없습니다.|r")
+        print("|cffff0000dodo: 전투 중에는 설정창을 열 수 없습니다.|r")
         return
     end
     Settings.OpenToCategory(OptionCategory:GetID())

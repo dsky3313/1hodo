@@ -15,11 +15,11 @@ local Formatters = {
 ------------------------------
 
 function CheckboxSlider(category, varNameCB, varNameSlider, label, tooltip, min, max, step, defaultCB, defaultSlider, formatType)
-    local varID_CB = "hodo_" .. varNameCB
-    local varID_Slider = "hodo_" .. varNameSlider
+    local varID_CB = "dodo_" .. varNameCB
+    local varID_Slider = "dodo_" .. varNameSlider
 
-    local cbSetting = Settings.GetSetting(varID_CB) or Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, hodoDB, Settings.VarType.Boolean, label, defaultCB or false)
-    local sliderSetting = Settings.GetSetting(varID_Slider) or Settings.RegisterAddOnSetting(category, varID_Slider, varNameSlider, hodoDB, Settings.VarType.Number, label, tonumber(defaultSlider) or min)
+    local cbSetting = Settings.GetSetting(varID_CB) or Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, dodoDB, Settings.VarType.Boolean, label, defaultCB or false)
+    local sliderSetting = Settings.GetSetting(varID_Slider) or Settings.RegisterAddOnSetting(category, varID_Slider, varNameSlider, dodoDB, Settings.VarType.Number, label, tonumber(defaultSlider) or min)
 
     local sliderOptions = Settings.CreateSliderOptions(min, max, step)
     -- 여기에 필요 시 Formatters 적용 가능
@@ -33,8 +33,8 @@ function CheckboxSlider(category, varNameCB, varNameSlider, label, tooltip, min,
         sliderOptions = sliderOptions,
     }
 
-    -- hodoUI.xml에서 만든 템플릿 사용
-    local initializer = Settings.CreateSettingInitializer("hodoCheckboxSliderTemplate", data)
+    -- dodoUI.xml에서 만든 템플릿 사용
+    local initializer = Settings.CreateSettingInitializer("dodoCheckboxSliderTemplate", data)
 
     local function OnValueChanged()
         if ns.CameraTilt then ns.CameraTilt() end

@@ -7,13 +7,13 @@ local addonName, ns = ...
 -- 체크박스 드롭다운
 ------------------------------
 function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, options, defaultCB, defaultDD, func)
-    local varID_CB = "hodo_" .. varNameCB
-    local varID_DD = "hodo_" .. varNameDD
+    local varID_CB = "dodo_" .. varNameCB
+    local varID_DD = "dodo_" .. varNameDD
 
-    local cbSetting = Settings.GetSetting(varID_CB) or Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, hodoDB, Settings.VarType.Boolean, label, defaultCB or false)
+    local cbSetting = Settings.GetSetting(varID_CB) or Settings.RegisterAddOnSetting(category, varID_CB, varNameCB, dodoDB, Settings.VarType.Boolean, label, defaultCB or false)
 
     local fallbackValue = (options and options[1]) and options[1].value or ""
-    local ddSetting = Settings.GetSetting(varID_DD) or Settings.RegisterAddOnSetting(category, varID_DD, varNameDD, hodoDB, Settings.VarType.String, label, defaultDD or fallbackValue)
+    local ddSetting = Settings.GetSetting(varID_DD) or Settings.RegisterAddOnSetting(category, varID_DD, varNameDD, dodoDB, Settings.VarType.String, label, defaultDD or fallbackValue)
     local function GetOptions()
         local container = Settings.CreateControlTextContainer()
         if options then
@@ -36,7 +36,7 @@ function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, option
         dropDownTooltip = tooltip,
     }
 
-    local initializer = Settings.CreateSettingInitializer("hodoCheckboxDropdownTemplate", data)
+    local initializer = Settings.CreateSettingInitializer("dodoCheckboxDropdownTemplate", data)
 
     local function OnValueChanged()
 

@@ -1,0 +1,40 @@
+## Interface: 120000
+## Title: dodo
+## Version: 12.0.0
+## Author: dodo
+## Notes: dodo QoL
+## IconTexture: Interface\ICONS\Trade_engineering
+## SavedVariables: dodoDB
+
+# 2020.11.23 제작
+
+UI/dodoUI.xml
+UI/Checkbox.lua
+UI/DropDown.lua
+UI/Slider.lua
+UI/CheckboxDropdown.lua
+UI/CheckboxSlider.lua
+
+AuctionFilter.lua
+#BrowseGroup.lua
+#CameraTilt.lua
+#ChatBubble.lua
+#DeleteNow.lua
+#FrameScale.lua
+#InsDifficulty.lua
+#KeyRoll.lua
+#MyKey.lua
+#NewLFG.lua
+#PartyClass.lua
+#QuickBobber.lua
+
+#Resource.lua
+#Resource2.lua
+
+#Teleport.lua
+
+#SkyRiding.lua
+
+#Slash.lua
+
+Option.lua

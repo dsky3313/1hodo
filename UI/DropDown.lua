@@ -7,11 +7,11 @@ local addonName, ns = ...
 -- 드롭다운
 ------------------------------
 function DropDown(category, varName, label, tooltip, options, default)
-    local varID = "hodo_" .. varName
+    local varID = "dodo_" .. varName
 
     local setting = Settings.GetSetting(varID)
     if not setting then
-        setting = Settings.RegisterAddOnSetting(category, varID, varName, hodoDB, Settings.VarType.String, label, default or options[1].value)
+        setting = Settings.RegisterAddOnSetting(category, varID, varName, dodoDB, Settings.VarType.String, label, default or options[1].value)
     end
 
     local function GetOptions()
@@ -22,7 +22,7 @@ function DropDown(category, varName, label, tooltip, options, default)
         return container:GetData()
     end
 
-    local initializer = Settings.CreateControlInitializer("hodoDropdownTemplate", setting, GetOptions, tooltip)
+    local initializer = Settings.CreateControlInitializer("dodoDropdownTemplate", setting, GetOptions, tooltip)
     setting:SetValueChangedCallback(function()
 
         if ns.ChatBubble then ns.ChatBubble() end

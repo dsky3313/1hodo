@@ -2,7 +2,7 @@
 -- 테이블
 ------------------------------
 local addonName, ns = ...
-hodoDB = hodoDB or {}
+dodoDB = dodoDB or {}
 
 local function isIns() -- 인스확인
     local _, instanceType, difficultyID = GetInstanceInfo()
@@ -17,7 +17,7 @@ local AHF = Enum.AuctionHouseFilter.CurrentExpansionOnly
 local function checkAuctionFilter()
     if isIns() then return end
 
-    local isEnabled = (hodoDB.useAuctionFilter ~= false) -- 기본값 true
+    local isEnabled = (dodoDB.useAuctionFilter ~= false) -- 기본값 true
     local AuctionFrame = AuctionHouseFrame and AuctionHouseFrame.SearchBar
 
     if not AuctionFrame or not AuctionFrame.FilterButton then return end
@@ -29,7 +29,7 @@ end
 local function checkCraftFilter()
     if isIns() then return end
 
-    local isEnabled = (hodoDB.useCraftFilter ~= false) -- 기본값 true
+    local isEnabled = (dodoDB.useCraftFilter ~= false) -- 기본값 true
     local craftFrame = ProfessionsCustomerOrdersFrame
     local dropdown = craftFrame and craftFrame.BrowseOrders and craftFrame.BrowseOrders.SearchBar and craftFrame.BrowseOrders.SearchBar.FilterDropdown
 
