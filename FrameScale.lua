@@ -2,6 +2,7 @@
 -- 테이블
 ------------------------------
 local addonName, ns = ...
+dodoDB = dodoDB or {}
 
 local gmf = GameMenuFrame
 local mmbbb = MainMenuBarBackpackButton
@@ -11,7 +12,7 @@ local thf = TalkingHeadFrame
 -- 동작
 ------------------------------
 local function FrameScale()
-    local db = hodoDB or {}
+    local db = dodoDB or {}
 
     local gmfScale = db.frameScale_gmf or 0.9
     local mmbbbScale = db.frameScale_mmbbb or 0.7

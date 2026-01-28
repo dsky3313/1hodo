@@ -4,7 +4,7 @@
 local addonName, ns = ...
 dodoDB = dodoDB or {}
 
-fontOption = {
+chatbubbleFontTable = {
     { label = "2002", value = "Fonts\\2002.TTF" },
     { label = "2002b", value = "Fonts\\2002b.TTF" },
     { label = "ARIALN", value = "Fonts\\ARIALN.TTF" },

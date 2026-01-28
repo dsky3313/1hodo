@@ -2,13 +2,14 @@
 -- 테이블
 ------------------------------
 local addonName, ns = ...
+dodoDB = dodoDB or {}
 
 local function isIns() -- 인스확인
     local _, instanceType, difficultyID = GetInstanceInfo()
     return (difficultyID == 1 or instanceType == "raid") -- 1 일반 / 8 쐐기
 end
 
-NewLFG_AlertSoundTable = {
+newLFG_AlertSoundTable = {
     { label = "MurlocAggro", value = "416" },
     { label = "AuctionWindowOpen", value = "5274" },
     { label = "AuctionWindowClose", value = "5275" },
@@ -21,7 +22,6 @@ NewLFG_AlertSoundTable = {
 
 local alertTimer
 local armedAt = 0
-local isLeader = UnitIsGroupLeader("player") == true
 local lastApps = 0
 local lastTrig = 0
 
@@ -33,32 +33,37 @@ newLFG_Alert:SetSize(400, 50)
 newLFG_Alert:SetPoint("TOP", 50, -150)
 newLFG_Alert:Hide()
 
-newLFG_Alert.Text = newLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge2Outline")
+newLFG_Alert.Text = newLFG_Alert:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
 newLFG_Alert.Text:SetPoint("CENTER")
+local fontPath, _, fontFlags = newLFG_Alert.Text:GetFont()
+newLFG_Alert.Text:SetFont(fontPath, 22, fontFlags)
 newLFG_Alert.Text:SetText("|cffffff00[ 신규 신청 ]|r\n\n파티창을 확인하세요!")
 
 ------------------------------
 -- 동작
 ------------------------------
-function NewLFG(isManual)
-    if not isManual then
-        if isIns() or InCombatLockdown() then return end
+function NewLFG()
+    if isIns() or InCombatLockdown() then return end
+
+    local isLeader = UnitIsGroupLeader("player") == true
+    local useMemberAlert = dodoDB.useNewLFGLeade
+
+    if not useMemberAlert and not isLeader then
+        return
     end
 
-if not isManual then
-        if GroupFinderFrame and not GroupFinderFrame:IsVisible() then
-            PVEFrame_ShowFrame("GroupFinderFrame")
-            if GroupFinderFrameGroupButton3 then
-                GroupFinderFrameGroupButton3:Click()
-            end
+    if GroupFinderFrame and not GroupFinderFrame:IsVisible() then
+        PVEFrame_ShowFrame("GroupFinderFrame")
+        if GroupFinderFrameGroupButton3 then
+            GroupFinderFrameGroupButton3:Click()
         end
-
-        newLFG_Alert:Show()
-        if alertTimer then alertTimer:Cancel() end
-        alertTimer = C_Timer.After(7, function() newLFG_Alert:Hide() end)
     end
 
-    local soundID = (hodoDB and hodoDB.soundID) or "5274"
+    newLFG_Alert:Show()
+    if alertTimer then alertTimer:Cancel() end
+    alertTimer = C_Timer.After(7, function() newLFG_Alert:Hide() end)
+
+    local soundID = (dodoDB and dodoDB.soundID) or "5274"
     PlaySound(tonumber(soundID), "Master")
 end
 
@@ -70,17 +75,14 @@ initNewLFG:RegisterEvent("PLAYER_ENTERING_WORLD")
 initNewLFG:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
 initNewLFG:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
 
-initNewLFG:SetScript("OnEvent", function (self, event, arg1)
-    if event == "PLAYER_ENTERING_WORLD" then
+initNewLFG:SetScript("OnEvent", function (self, event)
+    if event == "PLAYER_ENTERING_WORLD" then -- 지역 이동
         C_Timer.After(0.5, function()
             if isIns() then
                 self:UnregisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-                self:UnregisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
                 lastApps = 0
             else
                 self:RegisterEvent("LFG_LIST_APPLICANT_LIST_UPDATED")
-                self:RegisterEvent("LFG_LIST_ACTIVE_ENTRY_UPDATE")
-                -- 밖으로 나왔을 때 초기 카운트 설정
                 local apps = C_LFGList.GetApplicants()
                 lastApps = (apps and #apps) or 0
                 armedAt = GetTime() + 1.5
@@ -89,37 +91,27 @@ initNewLFG:SetScript("OnEvent", function (self, event, arg1)
         return
     end
 
-    if isIns() then return end
+    if isIns() or (dodoDB and dodoDB.useNewLFG == false) then return end
 
-    local useNewLFG = (hodoDB and hodoDB.useNewLFG ~= false)
-    if not useNewLFG then return end
-
-    if hodoDB and hodoDB.NewLFG_LeaderOnly and IsInGroup() and not UnitIsGroupLeader("player") then
-        lastApps = 0
-        return
-    end
-
-
-    local now = GetTime() -- 신청자 체크 로직
+    local now = GetTime() -- 신청자 확인
     local apps = C_LFGList.GetApplicants()
     local count = (apps and #apps) or 0
 
-    if event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" then -- 파티 모집을 등록 및 변경 시, 스팸 방지
+    if event == "LFG_LIST_ACTIVE_ENTRY_UPDATE" then -- 모집글 변경
         lastApps = count
         armedAt = now + 1.5
         return
     end
 
-    if now >= armedAt then -- 신청자 업데이트 감지
-        if count > lastApps then
-            if (now - lastTrig) > 1.0 then -- 1초 내부 쿨타임
-                NewLFG() -- 알림 실행
-                lastTrig = now
-            end
+    if now >= armedAt and count > lastApps then
+        if (now - lastTrig) > 1.0 then 
+            NewLFG()
+            lastTrig = now
         end
     end
     lastApps = count
 end)
+
 armedAt = GetTime() + 2 -- 시작 대기 시간 설정
 
 ns.NewLFG = NewLFG

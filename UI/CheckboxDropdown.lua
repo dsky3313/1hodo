@@ -52,4 +52,5 @@ function CheckBoxDropDown(category, varNameCB, varNameDD, label, tooltip, option
     if layout then
         layout:AddInitializer(initializer)
     end
+    return cbSetting, ddSetting, initializer
 end
