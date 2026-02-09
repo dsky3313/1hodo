@@ -34,6 +34,11 @@ L["파티 클래스 현황"] = "Party Class Status"
 -- QuickBobber.lua
 L["낚시찌"] = "Fishing Bobber"
 
+-- ResourceBar.lua
+L["투신"] = "Avatar"
+L["소용돌이 연마"] = "Whirlwind"
+L["고통 감내"] = "Ignore Pain"
+
 -- Slash.lua
 L["전투 중에는 열 수 없습니다."] = "You cannot open during combat."
 
@@ -59,7 +64,7 @@ L["검사"] = "Black Temple"
 
 L["기공"] = "EG"
 
-L["소용돌이"] = "VP"
+L["누각"] = "VP"
 L["파도"] = "ToTT"
 L["그림바톨"] = "GB"
 

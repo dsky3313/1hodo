@@ -47,7 +47,7 @@ local teleportTable = {
     { id = 48933, type = "item", category = "WoL", name = L["기공"] },
 
     -- CATA
-    { id = 410080, type = "spell", category = "CATA", name = L["소용돌이"] },
+    { id = 410080, type = "spell", category = "CATA", name = L["누각"] },
     { id = 424142, type = "spell", category = "CATA", name = L["파도"] },
     { id = 445424, type = "spell", category = "CATA", name = L["그림바톨"] },
 
