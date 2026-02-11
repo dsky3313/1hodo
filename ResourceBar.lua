@@ -29,76 +29,29 @@ local ClassConfig = {
     },
 }
 
+---@diagnostic disable: redundant-parameter
+---@diagnostic disable-next-line: param-type-mismatch
+
+-- ==============================
+-- 
+-- ==============================
+
+-- 현재 특성 버프 목록 저장
 local currentSpecBuffs = {}
-local cachedPowerType = nil
-
-local curve = C_CurveUtil.CreateCurve()
-curve:SetType(Enum.LuaCurveType.Linear)
-curve:AddPoint(0, 0)
-curve:AddPoint(1, 100)
-
 local function UpdateCurrentSpecConfig()
     local _, englishClass = UnitClass("player")
     local spec = C_SpecializationInfo.GetSpecialization()
     currentSpecBuffs = (ClassConfig[englishClass] and ClassConfig[englishClass][spec]) or {}
+
+    -- 디버깅용
+    -- print(string.format("[ResourceBar2] 특성 변경: %s - 추적 버프: %d개", englishClass, #currentSpecBuffs))
+    -- for i, buff in ipairs(currentSpecBuffs) do
+    --     print(string.format("  [%d] %s", i, buff.spellName))
+    -- end
 end
 
----@diagnostic disable: param-type-mismatch
----@diagnostic disable: redundant-parameter
-
 -- ==============================
--- 디스플레이
--- ==============================
-local bar1Frame = CreateFrame("StatusBar", "ResourceBar1", UIParent, barConfigs[1].template)
-bar1Frame:SetSize(barConfigs[1].width, barConfigs[1].height)
-bar1Frame:SetPoint("CENTER", UIParent, "CENTER", 0, barConfigs[1].y)
-bar1Frame:SetFrameLevel(barConfigs[1].level)
-
-local bar2Frame = CreateFrame("StatusBar", "ResourceBar2", UIParent, barConfigs[2].template)
-bar2Frame:SetSize(barConfigs[2].width, barConfigs[2].height)
-bar2Frame:SetPoint("TOP", bar1Frame, "BOTTOM", 0, barConfigs[2].y)
-bar2Frame:SetFrameLevel(barConfigs[2].level)
-
--- ==============================
--- ResourceBar1
--- ==============================
-local ResourceBar1Mixin = {}
-
-function ResourceBar1Mixin:Update()
-    if not bar1Frame then return end
-
-    local powerType, powerToken = UnitPowerType("player")
-
-    -- powerType 색상 업데이트
-    if powerType ~= cachedPowerType then
-        cachedPowerType = powerType
-        local color = PowerBarColor[powerToken] or PowerBarColor[powerType] or {r=1, g=1, b=1}
-        self:SetStatusBarColor(color.r, color.g, color.b)
-    end
-
-    local current = UnitPower("player", powerType)
-    local max = UnitPowerMax("player", powerType)
-
-    if max and max > 0 then
-        self:SetMinMaxValues(0, max)
-        self:SetValue(current, Enum.StatusBarInterpolation.ExponentialEaseOut)
-
-        if self.countPower then
-            if powerType == 0 then
-                local percentage = UnitPowerPercent("player", powerType, false, curve)
-                self.countPower:SetFormattedText("%d", percentage)
-            else
-                self.countPower:SetText(current)
-            end
-        end
-    end
-end
-
-Mixin(bar1Frame, ResourceBar1Mixin)
-C_Timer.NewTicker(0.1, function() bar1Frame:Update() end)
-
--- ==============================
--- ResourceBar2
+-- ResourceBar2 로직
 -- ==============================
 local ResourceBar2Mixin = {}
 
@@ -150,6 +103,7 @@ function ResourceBar2Mixin:Update()
         local auraData = C_UnitAuras.GetAuraDataByAuraInstanceID(unit, auraInstanceID)
         if auraData then
             if self.buffConfig and self.buffConfig.barMode == "duration" then
+                -- Duration 모드: OnUpdate 설정
                 if not self._hasDurationUpdate then
                     self:SetScript("OnUpdate", function(self, elapsed)
                         if not self.viewerItem or not self.viewerItem.auraInstanceID then
@@ -167,6 +121,7 @@ function ResourceBar2Mixin:Update()
                                 local remaining = durObj:GetRemainingDuration()
                                 self:SetValue(remaining, Enum.StatusBarInterpolation.ExponentialEaseOut)
 
+                                -- 텍스트 업데이트
                                 if self.countStack then
                                     self.countStack:SetFormattedText("%d", remaining)
                                 end
@@ -176,6 +131,7 @@ function ResourceBar2Mixin:Update()
                     self._hasDurationUpdate = true
                 end
             else
+                -- Stack 모드: 스택 수 사용
                 if self._hasDurationUpdate then
                     self:SetScript("OnUpdate", nil)
                     self._hasDurationUpdate = false
@@ -191,7 +147,62 @@ function ResourceBar2Mixin:Update()
     end
 end
 
+
+
+-- ==============================
+-- 디스플레이
+-- ==============================
+local bar1Frame = CreateFrame("StatusBar", "ResourceBar1", UIParent, barConfigs[1].template)
+bar1Frame:SetSize(barConfigs[1].width, barConfigs[1].height)
+bar1Frame:SetPoint("CENTER", UIParent, "CENTER", 0, barConfigs[1].y)
+bar1Frame:SetFrameLevel(barConfigs[1].level)
+
+local bar2Frame = CreateFrame("StatusBar", "ResourceBar2", UIParent, barConfigs[2].template)
 Mixin(bar2Frame, ResourceBar2Mixin)
+bar2Frame:SetSize(barConfigs[2].width, barConfigs[2].height)
+bar2Frame:SetPoint("TOP", bar1Frame, "BOTTOM", 0, barConfigs[2].y)
+bar2Frame:SetFrameLevel(barConfigs[2].level)
+
+-- ==============================
+-- 바1
+-- ==============================
+local curve = C_CurveUtil.CreateCurve()
+curve:SetType(Enum.LuaCurveType.Linear)
+curve:AddPoint(0, 0)
+curve:AddPoint(1, 100)
+
+local function UpdateBar1()
+    if not bar1Frame then return end
+
+    local powerType, powerToken = UnitPowerType("player")
+    local current = UnitPower("player", powerType)
+    local max = UnitPowerMax("player", powerType)
+
+    if max and max > 0 then
+        bar1Frame:SetMinMaxValues(0, max)
+        bar1Frame:SetValue(current, Enum.StatusBarInterpolation.ExponentialEaseOut)
+        
+        if bar1Frame.countPower then
+            if powerType == 0 then
+                local percentage = UnitPowerPercent("player", powerType, false, curve)
+                bar1Frame.countPower:SetFormattedText("%d", percentage)
+            else
+                bar1Frame.countPower:SetText(current)
+            end
+        end
+    end
+
+    local color = PowerBarColor[powerToken] or PowerBarColor[powerType] or {r=1, g=1, b=1}
+    bar1Frame:SetStatusBarColor(color.r, color.g, color.b)
+
+    if bar2Frame and bar2Frame.Update then
+        bar2Frame:Update()
+    end
+end
+
+C_Timer.NewTicker(0.1, UpdateBar1)
+
+-- 바2
 
 -- ==============================
 -- ResourceBar2 CDM 연동
@@ -199,12 +210,16 @@ Mixin(bar2Frame, ResourceBar2Mixin)
 local ResourceBar2UpdaterMixin = {}
 
 function ResourceBar2UpdaterMixin:OnLoad()
+    self.bar2Frame = _G["ResourceBar2"]
+
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     eventFrame:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_SPECIALIZATION_CHANGED" then
             UpdateCurrentSpecConfig()
-            bar2Frame:Update()
+            if bar2Frame and bar2Frame.Update then
+                bar2Frame:Update()
+            end
         end
     end)
 
@@ -231,22 +246,26 @@ function ResourceBar2UpdaterMixin:UpdateFromItem(item)
 
     local spellName = C_Spell.GetSpellName(cdInfo.spellID)
 
+    -- ✅ 현재 특성의 모든 버프 순회
     for _, buffConfig in ipairs(currentSpecBuffs) do
         if spellName == buffConfig.spellName then
-            bar2Frame:SetViewerItem(item)
-            bar2Frame:SetBuffConfig(buffConfig)
-            bar2Frame:Update()
+            if self.bar2Frame and self.bar2Frame.SetViewerItem then
+                self.bar2Frame:SetViewerItem(item)
+                -- ✅ 추가: 매칭된 버프 설정을 바에 저장
+                self.bar2Frame:SetBuffConfig(buffConfig)
+                self.bar2Frame:Update()
+            end
             return
         end
     end
 end
 
 function ResourceBar2UpdaterMixin:HookViewerItem(item)
-    if not item.cdmHooked then
+    if not item.__CDMBAHooked then
         hooksecurefunc(item, 'RefreshData', function()
             self:UpdateFromItem(item)
         end)
-        item.cdmHooked = true
+        item.__CDMBAHooked = true
     end
     self:UpdateFromItem(item)
 end
