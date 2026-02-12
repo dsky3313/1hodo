@@ -14,7 +14,7 @@ local iconConfig = {
     ROW_HEIGHT = 55,    -- 행 높이
     ICON_X = 20,
     BUTTON_START_X = 70,
-    START_Y = -25,
+    START_Y = -20,
 }
 
 local expTable = {
@@ -45,6 +45,7 @@ local teleportTable = {
 
     -- WoL
     { id = 48933, type = "item", category = "WoL", name = L["기공"] },
+    { id = 1254555, type = "spell", category = "WoL", name = L["샤론"] },
 
     -- CATA
     { id = 410080, type = "spell", category = "CATA", name = L["누각"] },
@@ -71,11 +72,12 @@ local teleportTable = {
     { id = 159896, type = "spell", category = "WoD", name = L["선착장"] },
     { id = 159895, type = "spell", category = "WoD", name = L["피망치"] },
     { id = 159897, type = "spell", category = "WoD", name = L["아킨둔"] },
-    { id = 159898, type = "spell", category = "WoD", name = L["하늘탑"] },
+    { id = 1254557, type = "spell", category = "WoD", name = L["하늘탑"] },
     { id = 159902, type = "spell", category = "WoD", name = L["검바탑"] },
 
     -- Legion
     { id = 151652, type = "item", category = "Legion", name = L["기공"] },
+    { id = 1254551, type = "spell", category = "Legion", name = L["삼두정"] },
     { id = 393764, type = "spell", category = "Legion", name = L["용맹"] },
     { id = 410078, type = "spell", category = "Legion", name = L["넬둥"] },
     { id = 393766, type = "spell", category = "Legion", name = L["별궁"] },
@@ -144,12 +146,9 @@ local teleportTable = {
         -- MN
     { id = 221966, type = "item", category = "MN", name = L["기공"] },
     { id = 1254559, type = "spell", category = "MN", name = L["동굴"] },
-    { id = 1254555, type = "spell", category = "MN", name = L["샤론"] },
-    { id = 1254551, type = "spell", category = "MN", name = L["삼두정"] },
     { id = 1254572, type = "spell", category = "MN", name = L["정원"] },
     { id = 1254563, type = "spell", category = "MN", name = L["제나스"] },
     { id = 1254400, type = "spell", category = "MN", name = L["첨탑"] },
-    { id = 1254557, type = "spell", category = "MN", name = L["하늘탑"] },
 
     -- ETC
     { id = 1233637, type = "macro", iconID = 7252953, category = "ETC", name = L["하우징"] },
@@ -166,8 +165,13 @@ local col, row = 0, -1
 -- ==============================
 -- 디스플레이
 -- ==============================
+-- 동적 높이 계산
+local rowCount = #expTable
+local frameHeight = math.abs(iconConfig.START_Y) + (rowCount * iconConfig.ROW_HEIGHT) + 10
+
+-- 프레임 크기 적용
 local TeleportFrame = CreateFrame("Frame", "TeleportFrame", UIParent, "BackdropTemplate")
-TeleportFrame:SetSize(650, 750)
+TeleportFrame:SetSize(650, frameHeight)
 TeleportFrame:SetPoint("LEFT", GameMenuFrame, "RIGHT", 20, 0)
 TeleportFrame:Hide()
 
@@ -186,7 +190,7 @@ local seasonCol, seasonRow = 0, 0
 local playerFaction = UnitFactionGroup("player")
 
 -- 시즌 아이콘
-local seasonBtnStartX = iconConfig.BUTTON_START_X + (iconConfig.BUTTON_SIZE + iconConfig.BUTTON_SPACING) * 4
+local seasonBtnStartX = iconConfig.BUTTON_START_X + ((iconConfig.BUTTON_SIZE + iconConfig.BUTTON_SPACING) * 6)
 local iconSeasonTitle = IconLib:Create("TeleSeasonTitle", TeleportFrame, {iconsize = {iconConfig.BUTTON_SIZE, iconConfig.BUTTON_SIZE}})
 iconSeasonTitle:SetPoint("TOPLEFT", TeleportFrame, "TOPLEFT", seasonBtnStartX, iconConfig.START_Y)
 iconSeasonTitle:ApplyConfig({
@@ -294,6 +298,9 @@ for i, data in ipairs(teleportTable) do
 end
 
 local function UpdateUIStatus()
+    -- 전투 중에는 UI 상태 업데이트를 건너뜁니다 (에러 방지)
+    if InCombatLockdown() then return end
+    
     for _, icon in ipairs(teleportIcons) do
         if icon.UpdateStatus then
             icon:UpdateStatus()
@@ -307,12 +314,20 @@ local function UpdateUIStatus()
 end
 
 local function ESCTeleportFrame()
-    local isEnabled = (dodoDB and dodoDB.useTeleport ~= false) -- DB
+    -- 1. 현재 전투 중인지 먼저 확인 (가장 중요)
+    if InCombatLockdown() then return end
 
-    if isEnabled and GameMenuFrame:IsShown() and not InCombatLockdown() then
-        TeleportFrame:Show()
+    local isEnabled = (dodoDB and dodoDB.useTeleport ~= false)
+
+    -- 2. 조건에 따라 Show/Hide 수행
+    if isEnabled and GameMenuFrame:IsShown() then
+        if not TeleportFrame:IsShown() then
+            TeleportFrame:Show()
+        end
     else
-        TeleportFrame:Hide()
+        if TeleportFrame:IsShown() then
+            TeleportFrame:Hide()
+        end
     end
 end
 
@@ -323,17 +338,41 @@ local initTeleportFrame = CreateFrame("Frame")
 initTeleportFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 initTeleportFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 initTeleportFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+initTeleportFrame:RegisterEvent("PLAYER_REGEN_DISABLED") -- 전투 시작 이벤트 추가
+
 initTeleportFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_ENABLED" then
-        ESCTeleportFrame() -- 전투 종료 시 조건부 표시
-    else
+        -- 전투 종료 후 메뉴가 열려있다면 프레임을 다시 체크
+        ESCTeleportFrame()
+    elseif event == "PLAYER_REGEN_DISABLED" then
+        -- 전투가 시작되면 에러 방지를 위해 즉시 숨김 시도 (보통은 시스템이 차단하기 전 찰나에 수행)
         if TeleportFrame:IsShown() then
+            TeleportFrame:Hide()
+        end
+    else
+        -- 쿨다운 등 일반 업데이트 (전투 중 아닐 때만)
+        if not InCombatLockdown() and TeleportFrame:IsShown() then
             UpdateUIStatus()
         end
     end
 end)
 
-TeleportFrame:SetScript("OnShow", UpdateUIStatus)
+-- 프레임 자체 스크립트에서도 전투 체크
+TeleportFrame:SetScript("OnShow", function()
+    if not InCombatLockdown() then
+        UpdateUIStatus()
+    end
+end)
 
-GameMenuFrame:HookScript("OnShow", ESCTeleportFrame)
-GameMenuFrame:HookScript("OnHide", ESCTeleportFrame)
+-- 메뉴 후킹 부분
+GameMenuFrame:HookScript("OnShow", function()
+    if not InCombatLockdown() then
+        ESCTeleportFrame()
+    end
+end)
+
+GameMenuFrame:HookScript("OnHide", function()
+    if not InCombatLockdown() then
+        ESCTeleportFrame()
+    end
+end)

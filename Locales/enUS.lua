@@ -35,6 +35,8 @@ L["파티 클래스 현황"] = "Party Class Status"
 L["낚시찌"] = "Fishing Bobber"
 
 -- ResourceBar.lua
+L["영혼 파편"] = "Soul Fragment"
+L["무쇠가죽"] = "Ironfur"
 L["응축되는 물"] = "Coalescing Water"
 L["투신"] = "Avatar"
 L["소용돌이 연마"] = "Whirlwind"
@@ -142,6 +144,14 @@ L["어불동"] = "DFC"
 L["알다니"] = "EDA"
 L["언더마인"] = "UM"
 L["마괴종"] = "MO"
+
+L["동굴"] = "123"
+L["샤론"] = "123"
+L["삼두정"] = "123"
+L["정원"] = "123"
+L["제나스"] = "123"
+L["첨탑"] = "123"
+L["하늘탑"] = "123"
 
 L["하우징"] = "Housing"
 

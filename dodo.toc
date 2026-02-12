@@ -19,6 +19,7 @@ UI/OptionUI.lua
 UI/Icon.lua
 UI/ResourceBar.xml
 
+Actionbar.lua
 BrowseGroup.lua
 CameraTilt.lua
 ChatBubble.lua

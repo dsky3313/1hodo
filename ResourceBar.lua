@@ -11,6 +11,16 @@ local barConfigs = {
 }
 
 local ClassConfig = {
+    ["DEMONHUNTER"] = {
+        [2] = {
+            { spellName = L["영혼 파편"], barMode = "stack", maxStack = 6, color = { r = 0.86, g = 0.59, b = 0.98 } },
+        }
+    },
+    ["DRUID"] = {
+        [3] = {
+            { spellName = L["무쇠가죽"], barMode = "duration", duration = 7, color = { r = 1, g = 0.49, b = 0.04 } },
+        }
+    },
     ["SHAMAN"] = {
         [3] = {
             { spellName = L["응축되는 물"], barMode = "stack", maxStack = 2, color = { r = 0, g = 0.82, b = 1 } },
@@ -49,7 +59,7 @@ curve:AddPoint(0, 0)
 curve:AddPoint(1, 100)
 
 -- ==============================
--- ResourceBar2 Mixin 정의 (버프 바 기능)
+-- ResourceBar2 Mixin
 -- ==============================
 local ResourceBar2Mixin = {}
 
@@ -143,7 +153,7 @@ function ResourceBar2Mixin:Update()
 end
 
 -- ==============================
--- ResourceBar2 Mixin
+-- ResourceBar2UpdaterMixin
 -- ==============================
 local ResourceBar2UpdaterMixin = {}
 
@@ -247,7 +257,7 @@ local function UpdateBar1()
         if bar1Frame.countPower then
             if powerType == 0 then
                 local percentage = UnitPowerPercent("player", powerType, false, curve)
-                bar1Frame.countPower:SetFormattedText("%d%%", percentage)
+                bar1Frame.countPower:SetFormattedText("%d", percentage)
             else
                 bar1Frame.countPower:SetText(current)
             end
@@ -262,6 +272,27 @@ end
 C_Timer.NewTicker(0.1, UpdateBar1)
 
 -- ==============================
+-- 설정 관련
+-- ==============================
+local resourceBarEnabled = {
+    bar1 = true,   -- ResourceBar1 활성화 여부
+    bar2 = true,   -- ResourceBar2 활성화 여부
+}
+
+-- 리소스바 표시/숨기기 함수
+function dodo.ResourceBarToggle(barNum, enabled)
+    local frame = (barNum == 1) and bar1Frame or bar2Frame
+    if frame then
+        if enabled then
+            frame:Show()
+        else
+            frame:Hide()
+        end
+    end
+    resourceBarEnabled["bar" .. barNum] = enabled
+end
+
+-- ==============================
 -- 이벤트
 -- ==============================
 local updater = CreateFrame("Frame", "ResourceBar2Updater", UIParent)
@@ -271,7 +302,6 @@ local initResourcebar = CreateFrame("Frame")
 initResourcebar:RegisterEvent("PLAYER_LOGIN")
 initResourcebar:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_LOGIN" then
-        print("[ResourceBar] PLAYER_LOGIN 발생, ResourceBar2 초기화")
         updater:OnLoad()
         self:UnregisterEvent("PLAYER_LOGIN")
     end

@@ -11,6 +11,8 @@ Settings.RegisterAddOnCategory(mainCategory)
 -- 하위
 local subCategoryGeneral = Settings.RegisterVerticalLayoutSubcategory(mainCategory, "일반")
 local subCategoryInterface = Settings.RegisterVerticalLayoutSubcategory(mainCategory, "인터페이스")
+local subCategoryActionbar = Settings.RegisterVerticalLayoutSubcategory(mainCategory, "행동 단축바")
+local subCategoryCombat = Settings.RegisterVerticalLayoutSubcategory(mainCategory, "전투")
 local subCategoryParty = Settings.RegisterVerticalLayoutSubcategory(mainCategory, "파티")
 
 ------------------------------
@@ -58,6 +60,20 @@ function dodoCreateOptions()
         Slider(subCategoryInterface, "frameScale_mmbbb", "가방버튼", "가방버튼 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.7, "Percent", dodo.FrameScale)
         Slider(subCategoryInterface, "frameScale_th", "말머리", "말머리 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.8, "Percent", dodo.FrameScale)
 
+    -- 행동 단축바
+    local layoutActionbar = SettingsPanel:GetLayout(subCategoryActionbar)
+
+    -- 전투
+    local layoutCombat = SettingsPanel:GetLayout(subCategoryCombat)
+        -- 자원바
+        layoutCombat:AddInitializer(CreateSettingsListSectionHeaderInitializer("자원바 표시"))
+        Checkbox(subCategoryCombat, "useResourceBar1", "플레이어 자원바", "플레이어 마나/분노 표시 바를 활성화합니다.", true, function(enabled)
+            dodo.ResourceBarToggle(1, enabled)
+        end)
+        Checkbox(subCategoryCombat, "useResourceBar2", "버프 추적 바", "특성에 따른 버프 추적 바를 활성화합니다.", true, function(enabled)
+            dodo.ResourceBarToggle(2, enabled)
+        end)
+
     -- 파티
     local layoutParty = SettingsPanel:GetLayout(subCategoryParty)
         layoutParty:AddInitializer(CreateSettingsListSectionHeaderInitializer("파티"))
@@ -77,7 +93,7 @@ function dodoCreateOptions()
                 return settingParentNewLFG:GetValue()
             end)
         end
-        
+
         layoutParty:AddInitializer(CreateSettingsListSectionHeaderInitializer("인스턴스 난이도"))
         local settingParentInsDifficulty, initParentInsDifficulty = Checkbox(subCategoryParty, "useInsDifficulty", "인스 난이도 고정", "솔플 혹은 파티장일 시, 던전 난이도를 자동으로 변경합니다.", true, dodo.InsDifficulty)
         local settingChildInsDifficulty1, _, initChildInsDifficulty1 = CheckBoxDropDown(subCategoryParty, "useInsDifficultyDungeon", "InsDifficultyDungeon", "던전 난이도", "던전 난이도를 고정합니다.", difficultyTable.dungeon, true, difficultyTable.dungeon[3].value, dodo.InsDifficulty)
