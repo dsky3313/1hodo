@@ -1,9 +1,9 @@
 -- ==============================
 -- 테이블
 -- ==============================
+---@diagnostic disable: lowercase-global, undefined-field, undefined-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
-local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local function isIns() -- 인스확인
     local _, instanceType, difficultyID = GetInstanceInfo()
@@ -49,7 +49,7 @@ partyClassFrame:SetFrameStrata("MEDIUM")
 
 partyClassFrame.NineSlice.Text = partyClassFrame.NineSlice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 partyClassFrame.NineSlice.Text:SetPoint("TOPRIGHT", partyClassFrame, "TOPRIGHT", -80, -5)
-partyClassFrame.NineSlice.Text:SetText(L["파티 클래스 현황"])
+partyClassFrame.NineSlice.Text:SetText("파티 클래스 현황")
 
 partyClassFrame.Background = partyClassFrame:CreateTexture(nil, "BACKGROUND")
 partyClassFrame.Background:SetAtlas("collections-background-tile")

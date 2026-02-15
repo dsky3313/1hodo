@@ -11,7 +11,7 @@ dodoDB = dodoDB or {}
 local function audioSync()
     SetCVar("Sound_OutputDriverIndex", "0")
     Sound_GameSystem_RestartSoundSystem()
-    print("|cff00ff00[dodo]|r 음성 출력장치 변경")
+    -- print("|cff00ff00[dodo]|r 음성 출력장치 변경") -- 디버깅
 end
 
 -- ==============================
