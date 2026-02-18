@@ -6,6 +6,11 @@ local addonName, dodo = ...
 local IconLib = {}
 dodo.IconLib = IconLib
 
+local function isIns()
+    local _, instanceType = GetInstanceInfo()
+    return IsInInstance() or (instanceType ~= "none")
+end
+
 local fontColorTable = {
     white  = {1, 1, 1},
     yellow = {1, 0.82, 0},
@@ -82,47 +87,42 @@ function IconLib:Create(name, parent, config)
     frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
     -- 상태 업데이트
-    -- 상태 업데이트
-        function frame:UpdateStatus()
-            local data = self.iconData
-            if not data then return end
-
-            local color = (type(data.fontcolor) == "string" and fontColorTable[data.fontcolor])
-                        or data.fontcolor
-                        or fontColorTable.white
-            local isKnown = true
-
-            -- 1. 정보 업데이트 (비교 연산 제거)
-            local startTime, duration = 0, 0
-            if data.type == "spell" then
-                isKnown = C_SpellBook.IsSpellInSpellBook(data.id) or C_SpellBook.IsSpellKnown(data.id)
-                local cd = C_Spell.GetSpellCooldown(data.id)
-                if cd then
-                    startTime, duration = cd.startTime or 0, cd.duration or 0
-                end
-            elseif data.type == "item" then
-                local count = C_Item.GetItemCount(data.id)
-                self.Count:SetText(count > 1 and count or "")
-                isKnown = (count > 0) or (C_ToyBox and C_ToyBox.GetToyInfo(data.id))
-                startTime, duration = C_Item.GetItemCooldown(data.id)
-                startTime, duration = startTime or 0, duration or 0
-            elseif data.type == "macro" then
-                isKnown = true
-                self.Count:SetText(""); self.cooldown:Clear()
-            end
-
-            -- 2. 쿨타임 애니메이션 적용 (숫자 값 전달은 안전함)
-            self.cooldown:SetCooldown(startTime, duration)
-
-            -- 3. 글자색 설정
-            self.Name:SetTextColor(unpack(not isKnown and fontColorTable.gray or color))
-
-            -- 4. [수정] 흑백 설정: 오직 배우지 않았을 때만 흑백으로 처리
-            -- 쿨타임 비교(duration > 0)를 삭제하여 보안 에러를 원천 차단합니다.
-            self.icon:SetDesaturated(not isKnown)
+    function frame:UpdateStatus()
+        if isIns() then
+            if self.cooldown then self.cooldown:Clear() end return
         end
 
-    -- 테이블 적용 (ApplyConfig)
+        local data = self.iconData
+        if not data then return end
+
+        local color = (type(data.fontcolor) == "string" and fontColorTable[data.fontcolor]) or data.fontcolor or fontColorTable.white
+        local isKnown = true
+
+        -- 업데이트
+        local startTime, duration = 0, 0
+        if data.type == "spell" then
+            isKnown = C_SpellBook.IsSpellInSpellBook(data.id) or C_SpellBook.IsSpellKnown(data.id)
+            local cd = C_Spell.GetSpellCooldown(data.id)
+            if cd then
+                startTime, duration = cd.startTime or 0, cd.duration or 0
+            end
+        elseif data.type == "item" then
+            local count = C_Item.GetItemCount(data.id)
+            self.Count:SetText(count > 1 and count or "")
+            isKnown = (count > 0) or (C_ToyBox and C_ToyBox.GetToyInfo(data.id))
+            startTime, duration = C_Item.GetItemCooldown(data.id)
+            startTime, duration = startTime or 0, duration or 0
+        elseif data.type == "macro" then
+            isKnown = true
+            self.Count:SetText(""); self.cooldown:Clear()
+        end
+
+        self.cooldown:SetCooldown(startTime, duration) -- 쿨타임
+        self.Name:SetTextColor(unpack(not isKnown and fontColorTable.gray or color)) -- 글자색
+        self.icon:SetDesaturated(not isKnown) -- 흑백
+    end
+
+    -- 테이블 적용
     function frame:ApplyConfig(data)
         if InCombatLockdown() and data.isAction then return end
         self.iconData = data
@@ -180,17 +180,7 @@ function IconLib:Create(name, parent, config)
         end
 
         self:SetFrameStrata(data.framestrata or "HIGH")
-        self:UpdateStatus()
+        if not isIns() then self:UpdateStatus() end
     end
-
-    frame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-    frame:RegisterEvent("BAG_UPDATE_DELAYED")
-    frame:RegisterEvent("SPELLS_CHANGED")
-    frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    -- [추가] 전투 종료 후 상태를 최신화하기 위해 이벤트 추가
-    frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-
-    frame:SetScript("OnEvent", function(self) self:UpdateStatus() end)
-
     return frame
 end

@@ -1,9 +1,8 @@
 -- ==============================
 -- 테이블 /run dodoDB = nil; ReloadUI()
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global, undefined-field
 local addonName, dodo = ...
-dodoDB = dodoDB or {}
 
 -- 메인
 local mainCategory = Settings.RegisterVerticalLayoutCategory("dodo")
@@ -28,9 +27,9 @@ function dodoCreateOptions()
     local layoutGeneral = SettingsPanel:GetLayout(subCategoryGeneral)
         -- 카메라
         layoutGeneral:AddInitializer(CreateSettingsListSectionHeaderInitializer("카메라 시점"))
-        Slider(subCategoryGeneral, "cameraBase", "기본 시점", "기본시점 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2", dodo.CameraTilt)
-        Slider(subCategoryGeneral, "cameraDown", "탑다운 뷰", "수직으로 내렸을 때 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2", dodo.CameraTilt)
-        Slider(subCategoryGeneral, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 0.55, "Decimal2", dodo.CameraTilt)
+        Slider(subCategoryGeneral, "cameraBase", "기본 시점", "기본시점 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 1, "Decimal2", dodo.CameraTilt)
+        Slider(subCategoryGeneral, "cameraDown", "탑다운 뷰", "수직으로 내렸을 때 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 1, "Decimal2", dodo.CameraTilt)
+        Slider(subCategoryGeneral, "cameraFlying", "하늘비행 탈것 시점", "하늘비행 탈것 탑승 시 각도를 조절합니다.\n\n|cffaaffaa기본 : 1.0|r", 0.3, 1.0, 0.05, 1, "Decimal2", dodo.CameraTilt)
 
     -- 인터페이스
     local layoutInterface = SettingsPanel:GetLayout(subCategoryInterface)
@@ -63,10 +62,15 @@ function dodoCreateOptions()
         Slider(subCategoryInterface, "frameScale_mmbbb", "가방버튼", "가방버튼 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.7, "Percent", dodo.FrameScale)
         Slider(subCategoryInterface, "frameScale_th", "말머리", "말머리 크기를 조절합니다.", 0.5, 1.5, 0.1, 0.8, "Percent", dodo.FrameScale)
 
+        -- 프레임 크기
+        layoutInterface:AddInitializer(CreateSettingsListSectionHeaderInitializer("미니맵"))
+        Checkbox(subCategoryInterface, "useResetMinimapZoom", "미니맵 줌 리셋", "미니맵 줌 리셋", true, dodo.useResetMinimapZoom)
+
     -- 음성
     local layoutSound = SettingsPanel:GetLayout(subCategorySound)
         -- 출력 장치 동기화
-        Checkbox(subCategorySound, "useAudioSync", "출력장치 동기화", "출력장치 동기화.", true, dodo.audioSync)
+        layoutSound:AddInitializer(CreateSettingsListSectionHeaderInitializer("출력장치"))
+        Checkbox(subCategorySound, "useAudioSync", "출력장치 동기화", "출력장치 동기화.", false, dodo.audioSync)
 
     -- 행동 단축바
     local layoutActionbar = SettingsPanel:GetLayout(subCategoryActionbar)
@@ -98,6 +102,7 @@ function dodoCreateOptions()
             end)
         end
 
+        -- 인스 난이도
         layoutParty:AddInitializer(CreateSettingsListSectionHeaderInitializer("인스턴스 난이도"))
         local settingParentInsDifficulty, initParentInsDifficulty = Checkbox(subCategoryParty, "useInsDifficulty", "인스 난이도 고정", "솔플 혹은 파티장일 시, 던전 난이도를 자동으로 변경합니다.", true, dodo.InsDifficulty)
         local settingChildInsDifficulty1, _, initChildInsDifficulty1 = CheckBoxDropDown(subCategoryParty, "useInsDifficultyDungeon", "InsDifficultyDungeon", "던전 난이도", "던전 난이도를 고정합니다.", difficultyTable.dungeon, true, difficultyTable.dungeon[3].value, dodo.InsDifficulty)
@@ -120,6 +125,9 @@ function dodoCreateOptions()
 
     -- 설정 & 프로필
     local layoutSettingProfile = SettingsPanel:GetLayout(subCategorySettingProfile)
+        -- 이름표
+        layoutSettingProfile:AddInitializer(CreateSettingsListSectionHeaderInitializer("이름표"))
+        Checkbox(subCategorySettingProfile, "useNameplateFriendly", "아군 이름표 자동 설정", "아군 이름표에 클래스 색상을 적용하고 이름만 표시합니다.", true, dodo.nameplateFriendly)
 
     dodoOptionsCreated = true
 end
@@ -128,9 +136,14 @@ end
 -- 이벤트
 -- ==============================
 local initOptionFrame = CreateFrame("Frame")
-initOptionFrame:RegisterEvent("PLAYER_LOGIN")
-initOptionFrame:SetScript("OnEvent", function()
-    dodoCreateOptions()
+initOptionFrame:RegisterEvent("ADDON_LOADED")
+initOptionFrame:SetScript("OnEvent", function(self, event, arg1)
+    if arg1 == addonName then
+        dodoDB = dodoDB or {}
+        self:RegisterEvent("PLAYER_LOGIN")
+    elseif event == "PLAYER_LOGIN" then
+        if dodoCreateOptions then dodoCreateOptions() end
+    end
 end)
 
 -- ==============================

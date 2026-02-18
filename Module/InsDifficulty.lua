@@ -1,7 +1,7 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 
@@ -233,4 +233,3 @@ initInsDifficulty:SetScript("OnEvent", function(self, event, arg1)
 end)
 
 dodo.InsDifficulty = InsDifficulty
-UpdateUIStatus()

@@ -1,7 +1,7 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 

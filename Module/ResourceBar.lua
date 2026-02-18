@@ -1,18 +1,19 @@
 -- ==============================
 -- 테이블 및 설정
 -- ==============================
+------------ 룬 업데이트 관련 코드 최적화할것
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 ---@diagnostic disable: redundant-parameter, param-type-mismatch
 
 local barConfigs = {
     { name = "ResourceBar1", width = 276, height = 10, y = -220, level = 3000, template = "ResourceBar1Template" },
-    { name = "ResourceBar2", width = 270, height = 8, y = -5, level = 2999, template = "ResourceBar2Template" }
+    { name = "ResourceBar2", width = 276, height = 7, y = -4, level = 3001, template = "ResourceBar2Template" }
 }
 
 -- 테이블 구조 통일 (모두 배열 형태)
 local ClassConfig = {
-    ["DEATHKNIGHT"] = {
+    ["DEATHKNIGHT"] = { -- barMode = "cooldown" > 스킬쿨 확인 추가
         [1] = { { barMode = "rune" } },
         [2] = { { barMode = "rune" } },
         [3] = { { barMode = "rune" } },

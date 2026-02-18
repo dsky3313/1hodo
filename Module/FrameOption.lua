@@ -1,7 +1,7 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 
@@ -28,10 +28,16 @@ end
 -- 이벤트
 -- ==============================
 local initFrameScale = CreateFrame("Frame")
-initFrameScale:RegisterEvent("PLAYER_LOGIN")
-initFrameScale:SetScript("OnEvent", function(self, event)
-    C_Timer.After(0.5, function() FrameScale() end)
-    self:UnregisterAllEvents()
+initFrameScale:RegisterEvent("ADDON_LOADED")
+initFrameScale:SetScript("OnEvent", function(self, event, arg1)
+    if arg1 == addonName then
+        dodoDB = dodoDB or {}
+        self:RegisterEvent("PLAYER_LOGIN")
+    elseif event == "PLAYER_LOGIN" then
+        if FrameScale then FrameScale() end
+        self:UnregisterAllEvents()
+        self:SetScript("OnEvent", nil)
+    end
 end)
 
 dodo.FrameScale = FrameScale

@@ -1,7 +1,7 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 
@@ -16,7 +16,7 @@ local AHF = Enum.AuctionHouseFilter.CurrentExpansionOnly
 -- 동작
 -- ==============================
 local function checkAuctionFilter() -- 경매장 필터
-    if isIns() then return end
+    if not dodoDB or isIns() then return end
 
     local isEnabled = (dodoDB.useAuctionFilter ~= false) -- 기본값 true
     local AuctionFrame = AuctionHouseFrame and AuctionHouseFrame.SearchBar
@@ -27,7 +27,7 @@ local function checkAuctionFilter() -- 경매장 필터
 end
 
 local function checkCraftFilter() -- 주문제작 필터
-    if isIns() then return end
+    if not dodoDB or isIns() then return end
 
     local isEnabled = (dodoDB.useCraftFilter ~= false) -- 기본값 true
     local craftFrame = ProfessionsCustomerOrdersFrame
@@ -38,7 +38,7 @@ local function checkCraftFilter() -- 주문제작 필터
     dropdown:ValidateResetState()
 end
 
-function dodo.expFilter() -- 통합 실행 함수 (외부 공유용)
+function expFilter() -- 통합 실행 함수 (외부 공유용)
     checkAuctionFilter()
     checkCraftFilter()
 end
@@ -59,7 +59,7 @@ initFilterFrame:SetScript("OnEvent", function(self, event, arg1)
             else
                 initFilterFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
                 initFilterFrame:RegisterEvent("CRAFTINGORDERS_SHOW_CUSTOMER")
-                dodo.expFilter()
+                expFilter()
             end
         end)
     elseif event == "ADDON_LOADED" and arg1 == "Blizzard_AuctionHouseUI" then
@@ -86,3 +86,5 @@ initFilterFrame:SetScript("OnEvent", function(self, event, arg1)
         checkCraftFilter()
     end
 end)
+
+dodo.expFilter = expFilter

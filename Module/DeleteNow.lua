@@ -1,7 +1,7 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 
@@ -10,15 +10,15 @@ local function isIns() -- 인스확인
     return (difficultyID == 8 or instanceType == "raid") -- 1 일반 / 8 쐐기 / raid 레이드
 end
 
+local localizedDeleteMsg = "" -- 안내 문구 제거
+local cachedDeleteWord = "" -- 자동 기입용 단어
+
 -- ==============================
 -- 디스플레이
 -- ==============================
 local DeleteItemLink = StaticPopup1:CreateFontString(nil, "OVERLAY", "GameFontNormalMed1") -- 아이템 링크
 DeleteItemLink:SetPoint("CENTER", StaticPopup1, "CENTER", 0, 10)
 DeleteItemLink:Hide()
-
-local localizedDeleteMsg = "" -- 안내 문구 제거
-local cachedDeleteWord = "" -- 자동 기입용 단어
 
 do
     local _, secondPart = strsplit("@", gsub(DELETE_GOOD_ITEM, "[\r\n]", "@"), 2)
@@ -32,32 +32,32 @@ end
 -- 동작
 -- ==============================
 local function DeleteNow()
-    if isIns() then return end
+    if not dodoDB or isIns() then return end
 
-    local db = dodoDB or {}
     local _, _, itemLink = GetCursorInfo()
-
     if not StaticPopup1 or not StaticPopup1EditBox then return end
     if not itemLink then return end
     SetCVar("alwaysCompareItems", 0)
     DeleteItemLink:Hide()
     DeleteItemLink:SetText("")
 
-    if db.deleteNowHideEditbox then
+    if dodoDB.deleteNowHideEditbox then
         StaticPopup1EditBox:Hide()
         StaticPopup1Button1:Enable()
         DeleteItemLink:SetText(itemLink) -- 입력창 숨김 + 아이템링크 표시
         DeleteItemLink:Show()
+        -- print("|cff00ff00[dodo]|r 아이템파괴 + 아이템링크 표시") -- 디버깅
 
         local currentText = StaticPopup1Text:GetText() or ""
         if localizedDeleteMsg ~= "" then
             StaticPopup1Text:SetText((gsub(currentText, localizedDeleteMsg, "")))
         end
-    elseif db.deleteNowAutoFill then
+    elseif dodoDB.deleteNowAutoFill then
         StaticPopup1EditBox:Show()
         StaticPopup1EditBox:SetText(cachedDeleteWord) -- 자동 입력
         StaticPopup1EditBox:SetFocus()
         StaticPopup1Button1:Enable()
+        -- print("|cff00ff00[dodo]|r 아이템파괴 자동입력") -- 디버깅
     else
         return
     end

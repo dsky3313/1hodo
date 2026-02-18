@@ -1,10 +1,15 @@
 -- ==============================
 -- 테이블
 -- ==============================
----@diagnostic disable: lowercase-global, undefined-field, undefined-global
+---@diagnostic disable: lowercase-global
 local addonName, dodo = ...
 dodoDB = dodoDB or {}
 local IconLib = dodo.IconLib
+
+local function isIns() -- 인스확인
+    local _, instanceType, difficultyID = GetInstanceInfo()
+    return (difficultyID == 1 or instanceType == "raid") -- 1 일반 / 8 쐐기 / raid 레이드
+end
 
 local teleportIcons = {}
 
@@ -259,6 +264,8 @@ for i, data in ipairs(teleportTable) do
         local btnFont, _, btnOutline = iconTP.Name:GetFont()
         iconTP.Name:SetFont(btnFont, (strlenutf8(data.name) >= 4) and 10 or 11, btnOutline)
 
+        table.insert(teleportIcons, iconTP)
+
         -- 시즌 아이콘
         if data.isSeason then
             local iconSeasonConfig = {
@@ -298,13 +305,10 @@ for i, data in ipairs(teleportTable) do
 end
 
 local function UpdateUIStatus()
-    -- 전투 중에는 UI 상태 업데이트를 건너뜁니다 (에러 방지)
-    if InCombatLockdown() then return end
-    
+    if InCombatLockdown() or isIns() then return end
+
     for _, icon in ipairs(teleportIcons) do
-        if icon.UpdateStatus then
-            icon:UpdateStatus()
-        end
+        if icon.UpdateStatus then icon:UpdateStatus() end
 
         if icon.seasonColor then
             icon.Name:SetTextColor(unpack(icon.seasonColor))
@@ -314,12 +318,10 @@ local function UpdateUIStatus()
 end
 
 local function ESCTeleportFrame()
-    -- 1. 현재 전투 중인지 먼저 확인 (가장 중요)
     if InCombatLockdown() then return end
-
+    if isIns() then TeleportFrame:Hide() return end
     local isEnabled = (dodoDB and dodoDB.useTeleport ~= false)
 
-    -- 2. 조건에 따라 Show/Hide 수행
     if isEnabled and GameMenuFrame:IsShown() then
         if not TeleportFrame:IsShown() then
             TeleportFrame:Show()
@@ -335,44 +337,47 @@ end
 -- 이벤트
 -- ==============================
 local initTeleportFrame = CreateFrame("Frame")
-initTeleportFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-initTeleportFrame:RegisterEvent("BAG_UPDATE_DELAYED")
-initTeleportFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-initTeleportFrame:RegisterEvent("PLAYER_REGEN_DISABLED") -- 전투 시작 이벤트 추가
+initTeleportFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+local function ToggleEvents(enable)
+    if enable then
+        initTeleportFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+        initTeleportFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+        initTeleportFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        initTeleportFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    else
+        initTeleportFrame:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+        initTeleportFrame:UnregisterEvent("BAG_UPDATE_DELAYED")
+        initTeleportFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        initTeleportFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
+    end
+end
 
 initTeleportFrame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then
+        if isIns() then
+            ToggleEvents(false)
+            if TeleportFrame:IsShown() then TeleportFrame:Hide() end
+        else
+            ToggleEvents(true)
+            UpdateUIStatus()
+        end
+        return
+    end
+
     if event == "PLAYER_REGEN_ENABLED" then
-        -- 전투 종료 후 메뉴가 열려있다면 프레임을 다시 체크
         ESCTeleportFrame()
     elseif event == "PLAYER_REGEN_DISABLED" then
-        -- 전투가 시작되면 에러 방지를 위해 즉시 숨김 시도 (보통은 시스템이 차단하기 전 찰나에 수행)
-        if TeleportFrame:IsShown() then
-            TeleportFrame:Hide()
-        end
+        TeleportFrame:Hide()
     else
-        -- 쿨다운 등 일반 업데이트 (전투 중 아닐 때만)
-        if not InCombatLockdown() and TeleportFrame:IsShown() then
+        if TeleportFrame:IsShown() and not InCombatLockdown() then
             UpdateUIStatus()
         end
     end
 end)
 
--- 프레임 자체 스크립트에서도 전투 체크
-TeleportFrame:SetScript("OnShow", function()
-    if not InCombatLockdown() then
-        UpdateUIStatus()
-    end
-end)
+-- 메뉴 후킹
+GameMenuFrame:HookScript("OnShow", ESCTeleportFrame)
+GameMenuFrame:HookScript("OnHide", ESCTeleportFrame)
 
--- 메뉴 후킹 부분
-GameMenuFrame:HookScript("OnShow", function()
-    if not InCombatLockdown() then
-        ESCTeleportFrame()
-    end
-end)
-
-GameMenuFrame:HookScript("OnHide", function()
-    if not InCombatLockdown() then
-        ESCTeleportFrame()
-    end
-end)
+dodo.ESCTeleportFrame = ESCTeleportFrame

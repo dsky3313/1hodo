@@ -14,22 +14,25 @@ UI/Icon.lua
 UI/ResourceBar.xml
 
 Module\Audio.lua
-Module\BrowseGroup.lua
-Module\CameraTilt.lua
+Module\Camera.lua
 Module\ChatBubble.lua
-Module\Cvar.lua
+Module\CVar.lua
 Module\DeleteNow.lua
 Module\ExpFilter.lua
 Module\FrameOption.lua
 Module\InsDifficulty.lua
+Module\KeyRoll.lua
 Module\Minimap.lua
-Module\NewLFG.lua   
+Module\NewLFG.lua  
 Module\PartyClass.lua
 Module\QuickBobber.lua
 Module\ResourceBar.lua
 Module\Slash.lua
-Module\Teleport.lua
+Module\Teleport.lua 
 
-#Module\
+#Module\BrowseGroup.lua
 
 Option.lua
+
+#Mykey.lua
+#Module\
